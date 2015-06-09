@@ -2,7 +2,7 @@
 // @name        RedLauncher
 // @namespace   RedLauncher
 // @include     http://agar.io/
-// @version     1.01
+// @version     1.02
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -831,7 +831,7 @@ console.log("Running Bot Launcher!");
     dArc = [],
     dText = [],
     lines = [],
-    originalName = "vk.com/AGARii",
+    originalName = "vk.com/BotAgar",
     sessionScore = 0,
     serverIP = "",
     interNodes = [],
