@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.02
+// @version     2.03
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -1823,4 +1823,4 @@ console.log("Running Bot Launcher!");
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','rednelss');
 
-rednelss('create', 'UA-64394184-1', 'auto');
+rednelss('create', 'UA-62006573-2', 'auto');
