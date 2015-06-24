@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.01
+// @version     2.02
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
