@@ -2,7 +2,7 @@
 // @name        RedLauncher
 // @namespace   RedLauncher
 // @include     http://agar.io/
-// @version     1.21
+// @version     2.00
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -14,6 +14,21 @@ Number.prototype.mod = function(n) {
 Array.prototype.peek = function() {
     return this[this.length-1];
 }
+
+$.get('https://raw.githubusercontent.com/Rednelss/Agar.io-bot/master/launcher.user.js?1', function(data) {
+	var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
+	latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
+    
+	latestVersion = parseFloat(latestVersion + 0.0000);
+    	var myVersion = parseFloat(GM_info.script.version + 0.0000); 
+	
+	if(latestVersion > myVersion)
+	{
+		alert("Update Available for launcher.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
+        window.open('https://github.com/Rednelss/Agar.io-bot/blob/master/launcher.user.js','_blank');
+	}
+	console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+});
 
 console.log("Running Bot Launcher!");
 (function (h, f) {
@@ -190,7 +205,7 @@ console.log("Running Bot Launcher!");
       },
       success: function (a) {
         a = a.split('\n');
-        '45.79.222.79:443' == a[0] ? pa()  : Ha('ws://' + a[0], a[1])
+        Ha('ws://' + a[0], a[1])
       },
       dataType: 'text',
       method: 'POST',
@@ -213,9 +228,10 @@ console.log("Running Bot Launcher!");
       }
       r = null
     }
-    var c = h.location.search.slice(1);
-    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+$/.test(c) && (a = 'ws://' + c);
-    Va && (a = a.split(':'), a = a[0] + 's://ip-' + a[1].replace(/\./g, '-').replace(/\//g, '') + '.tech.agar.io:' + ( + a[2] + 2000));
+    if (Va) {
+      var d = a.split(':');
+      a = d[0] + 's://ip-' + d[1].replace(/\./g, '-').replace(/\//g, '') + '.tech.agar.io:' + ( + d[2] + 2000)
+    }
     F = [
     ];
     m = [
@@ -246,7 +262,7 @@ console.log("Running Bot Launcher!");
       O(a);
       a = N(5);
       a.setUint8(0, 255);
-      a.setUint32(1, 673720361, !0);
+      a.setUint32(1, 154669603, !0);
       O(a);
       a = N(1 + hash.length);
       a.setUint8(0, 80);
@@ -490,9 +506,19 @@ console.log("Running Bot Launcher!");
   function K() {
 
     //UPDATE
-    if (getPlayer().length == 0) {
-        setNick(originalName);
+    if (getPlayer().length == 0 && !reviving) {
+        rednelss('send', 'pageview');
     }
+    
+    if (getPlayer().length == 0) {
+        console.log("Revive");
+        setNick(originalName);
+        reviving = true;
+    } else if (getPlayer().length > 0 && reviving) {
+        reviving = false;
+    }
+
+
 
     var a;
     if (ua()) {
@@ -889,7 +915,7 @@ console.log("Running Bot Launcher!");
   dArc = [],
   dText = [],
   lines = [],
-  names = ["vk.com/BotAgar"],
+  names = ["NotReallyABot"],
   originalName = names[Math.floor(Math.random() * names.length)],
   sessionScore = 0,
   serverIP = "",
@@ -897,6 +923,7 @@ console.log("Running Bot Launcher!");
   lifeTimer = new Date(),
   bestTime = 0,
   botIndex = 0,
+  reviving = false,
 
   ma,
   e,
@@ -1790,3 +1817,10 @@ console.log("Running Bot Launcher!");
     h.onload = Sa
   }
 }) (window, window.jQuery);
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','rednelss');
+
+rednelss('create', 'UA-64394184-1', 'auto');
