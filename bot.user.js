@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        RedBot
-// @namespace   RedBot
+// @name        RednelssBot
+// @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     1.22
+// @version     2.01
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -16,10 +16,28 @@ Array.prototype.peek = function() {
     return this[this.length - 1];
 };
 
-console.log("Running Red Bot!");
+
+$.get('https://raw.githubusercontent.com/Rednelss/Agar.io-bot/master/bot.user.js?1', function(data) {
+    var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
+    latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
+
+    latestVersion = parseFloat(latestVersion + 0.0000);
+    var myVersion = parseFloat(GM_info.script.version + 0.0000); 
+	
+	if(latestVersion > myVersion)
+	{
+		alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
+        window.open('https://github.com/Rednelss/Agar.io-bot/blob/master/bot.user.js','_blank');
+	}
+	console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+});
+
+
+
+console.log("Running Rednelss Bot!");
 (function(f, g) {
     var splitDistance = 710;
-    console.log("Red Bot!");
+    console.log("Rednelss Bot!");
 
     if (f.botList == null) {
         f.botList = [];
@@ -27,10 +45,10 @@ console.log("Running Red Bot!");
         g('#locationUnknown').addClass('form-group');
     }
 
-    f.botList.push(["RedBot", findDestination]);
+    f.botList.push(["RednelssBot", findDestination]);
 
     var bList = g('#bList');
-    g('<option />', {value: (f.botList.length - 1), text: "RedBot"}).appendTo(bList);
+    g('<option />', {value: (f.botList.length - 1), text: "RednelssBot"}).appendTo(bList);
 
     //Given an angle value that was gotten from valueAndleBased(),
     //returns a new value that scales it appropriately.
@@ -456,287 +474,130 @@ console.log("Running Red Bot!");
         return [angle1, angle2];
     }
 
-    function seperateAngle(range) {
-        var angle1 = range[0];
-        var group1 = [angle1, false, -1];
+    function addWall(listToUse, blob) {
+        if (blob.x < 1000) {
+            //LEFT
+            //console.log("Left");
 
-        var angle2 = rangeToAngle(range);
-        var group2 = [angle2, true, 1];
-        return [group1, group2];
-    }
+            listToUse.push([[135, true], [225, false]]);
 
-    function addSorted(listToUse, group) {
-        var isAdded = false;
-        for (var i = 0; i < listToUse.length; i++) {
-            if (group[0] < listToUse[i][0]) {
-                listToUse.splice(i, 0, group);
-                isAdded = true;
-                break;
-            }
+            var lineLeft = followAngle(135, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(225, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
+        if (blob.y < 1000) {
+            //TOP
+            //console.log("TOP");
+            
+            listToUse.push([[225, true], [315, false]]);
 
-        if (!isAdded) {
-            listToUse.push(group);
+            var lineLeft = followAngle(225, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(315, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        return listToUse;
-    }
+        if (blob.x > 11180 - 1000) {
+            //RIGHT
+            //console.log("RIGHT");
 
-    function removeDuplicates(listToUse) {
-        if (listToUse.length > 0) {
-            var lastValue = listToUse[0][0];
-            var seriesStartIndex = -1;
-            var removeFirst = false;
+            listToUse.push([[315, true], [45, false]]);
+            
+            var lineLeft = followAngle(315, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(45, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
+        }
+        if (blob.y > 11180 - 1000) {
+            //BOTTOM
+            //console.log("BOTTOM");
 
-            var sortedLength = listToUse.length;
-            var sectionCount = 0;
-            var i = 1;
-            while (i < sortedLength) {
-                if (lastValue == listToUse[i][0]) {
-                    if (seriesStartIndex == -1) {
-                        seriesStartIndex = i - 1;
-                    }
-
-                    if (listToUse[seriesStartIndex][1] != listToUse[i][1]) {
-                        removeFirst = true;
-                    }
-                    listToUse[(i - 1).mod(sortedLength)][2] += listToUse[i][2];
-                    //console.log("Merging: " + listToUse[(i - 1).mod(sortedLength)][2]);
-                    listToUse.splice(i, 1);
-                    sortedLength--;
-                    i--;
-
-                } else {
-                    if (removeFirst) {
-                        listToUse[(seriesStartIndex - 1).mod(sortedLength)][2] += listToUse[seriesStartIndex][2];
-                        //console.log("Merging: " + listToUse[(seriesStartIndex - 1).mod(sortedLength)][2]);
-                        listToUse.splice(seriesStartIndex, 1);
-                        sortedLength--;
-                        i--;
-                        removeFirst = false;
-                    }
-                    seriesStartIndex = -1;
-
-                    lastValue = listToUse[i][0];
-                }
-                i++;
-            }
+            listToUse.push([[45, true], [135, false]]);
+            
+            var lineLeft = followAngle(45, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(135, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
 
         return listToUse;
-    }
-
-    function findFirstUpArrow(listToUse) {
-        var sortedLength = listToUse.length;
-        var downArrow = false;
-
-        var recursiveList = [];
-        var recursiveCount = 0;
-
-        for (var i = 0; i < listToUse.length; i++) {
-            if (!listToUse[i][1]) {
-                recursiveCount -= listToUse[i][2];
-                recursiveList.push(recursiveCount);
-            }
-            else {
-                recursiveCount -= listToUse[i][2];
-                recursiveList.push(recursiveCount);
-            }
-        }
-
-        var smallestCount = recursiveList[0];
-        var smallestIndex = 0;
-
-        for (var i = 1; i < recursiveList.length; i++) {
-            if (recursiveList[i] < smallestCount) {
-                smallestCount = recursiveList[i];
-                smallestIndex = i;
-            }
-        }
-
-        return smallestIndex;
-    }
-
-    function mergeAngles(listToUse) {
-        var startIndex = findFirstUpArrow(listToUse);
-        var angleList = [];
-        var recursiveCount = 0;
-        if (listToUse.length > 0) {
-            var currentArrow = true;
-            var currentAngle = listToUse[startIndex][0];
-
-            for (var i = 1; i < listToUse.length; i++) {
-                //console.log("i: " + i + " length: " + listToUse.length + " offset: " + startIndex);
-                if (listToUse[(startIndex + i).mod(listToUse.length)][1] != currentArrow && !currentArrow && recursiveCount > 0) {
-                    //console.log("-1, " + listToUse[(startIndex + i).mod(listToUse.length)][2]);
-                    recursiveCount -= listToUse[(startIndex + i).mod(listToUse.length)][2];
-                    //console.log("Unskip " + recursiveCount);
-                } else if (listToUse[(startIndex + i).mod(listToUse.length)][1] == currentArrow && currentArrow) {
-                    currentAngle = listToUse[(startIndex + i).mod(listToUse.length)][0];
-                } else if (listToUse[(startIndex + i).mod(listToUse.length)][1] != currentArrow && currentArrow) {
-                    //console.log("Add good angle: " + recursiveCount);
-                    currentArrow = false;
-                    var endAngle = listToUse[(startIndex + i).mod(listToUse.length)][0];
-                    var diff = (endAngle - currentAngle).mod(360);
-                    angleList.push([currentAngle, diff]);
-                } else if (listToUse[(startIndex + i).mod(listToUse.length)][1] != currentArrow && !currentArrow) {
-                    //console.log("Ready for take off " + recursiveCount);
-                    currentArrow = true;
-                    currentAngle = listToUse[(startIndex + i).mod(listToUse.length)][0];
-                } else if (listToUse[(startIndex + i).mod(listToUse.length)][1] == currentArrow && !currentArrow) {
-                    //console.log("1, " + listToUse[(startIndex + i).mod(listToUse.length)][2]);
-                    recursiveCount -= listToUse[(startIndex + i).mod(listToUse.length)][2];
-                    currentArrow = false;
-                    //console.log("Skip angle " + recursiveCount);
-                }
-                //console.log("");
-            }
-            /*if (currentArrow) {
-                console.log("Was this needed?");
-                var endAngle = listToUse[(startIndex - 1).mod(listToUse.length)][0];
-                var diff = (endAngle - currentAngle).mod(360);
-                angleList.push([currentAngle, diff]);
-            }*/
-        }
-        return angleList;
     }
 
     //listToUse contains angles in the form of [angle, boolean].
     //boolean is true when the range is starting. False when it's ending.
     //range = [[angle1, true], [angle2, false]]
+    
+    function getAngleIndex(listToUse, angle) {
+        if (listToUse.length == 0) {
+            return 0;
+        }
+
+        for (var i = 0; i < listToUse.length; i++) {
+            if (angle <= listToUse[i][0]) {
+                return i;
+            }
+        }
+
+        return listToUse.length;
+    }
+    
     function addAngle(listToUse, range) {
         //#1 Find first open element
         //#2 Try to add range1 to the list. If it is within other range, don't add it, set a boolean.
         //#3 Try to add range2 to the list. If it is withing other range, don't add it, set a boolean.
 
-        var startIndex = 0;
+        //TODO: Only add the new range at the end after the right stuff has been removed.
+
+        var startIndex = 1;
 
         if (listToUse.length > 0 && !listToUse[0][1]) {
-            startIndex = 1;
+            startIndex = 0;
         }
 
-        var startMark = 0;
-        var startBool = false;
+        var startMark = getAngleIndex(listToUse, range[0][0]);
+        var startBool = startMark.mod(2) != startIndex;
 
-        for (var i = 0; i < listToUse.length; i++) {
-            var angle1 = listToUse[(i + startIndex).mod(listToUse.length)][0]; 
-            var angle2 = listToUse[(i + 1 + startIndex).mod(listToUse.length)][0];
+        var endMark = getAngleIndex(listToUse, range[1][0]);
+        var endBool = endMark.mod(2) != startIndex;
 
-            console.log("Current Index: " + (i + startIndex).mod(listToUse.length) + " angle: " + angle1 + ", " + angle2);
+        var removeList = [];
 
-            var segmentRange = (angle2 - angle1).mod(360);
-
-            if (angleIsWithin(range[0][0], [angle1, segmentRange])) {
-
-                startMark = (i + 1 + startIndex).mod(listToUse.length);
-
-                if (i.mod(2) == 0) {
-                    startBool = true;
-                }
-
-                break;
+        if (startMark != endMark) {
+            //Note: If there is still an error, this would be it.
+            var biggerList = 0;
+            if (endMark == listToUse.length) {
+                biggerList = 1;
             }
 
-            //If startBool is false, add range[0] to array at index startMark.
-        }
+            for (var i = startMark; i < startMark + (endMark - startMark).mod(listToUse.length + biggerList); i++) {
+                removeList.push((i).mod(listToUse.length));
+            }
+        } else if (startMark < listToUse.length && endMark < listToUse.length) {
+            var startDist = (listToUse[startMark][0] - range[0][0]).mod(360);
+            var endDist = (listToUse[endMark][0] - range[1][0]).mod(360);
 
-        var endMark = 0;
-        var endBool = false;
-
-        for (var i = 0; i < listToUse.length; i++) {
-            var angle1 = listToUse[(i + startIndex).mod(listToUse.length)][0]; 
-            var angle2 = listToUse[(i + 1 + startIndex).mod(listToUse.length)][0];
-
-            var segmentRange = (angle2 - angle1).mod(360);
-
-            if (angleIsWithin(range[1][0], [angle1, segmentRange])) {
-
-                endMark = (i + 1 + startIndex).mod(listToUse.length);
-
-                if (i.mod(2) == 0) {
-                    endBool = true;
+            if (startDist < endDist) {
+                for (var i = 0; i < listToUse.length; i++) {
+                    removeList.push(i);
                 }
-
-                break;
             }
         }
 
-        if (startMark <= endMark) {
-            var tempLen = listToUse.length;
+        removeList.sort(function(a, b){return b-a});
 
-            if (!startBool) {
-                tempLen++;
-            }
-
-            if (!endBool) {
-                console.log("Truly added end: " + endMark + " value: " + range[1]);
-                listToUse.splice(endMark, 0, range[1]);
-                //endMark = (endMark + 1).mod(tempLen);
-            }
-            if (!startBool) {
-                console.log("Truly added sta: " + startMark + " value: " + range[0]);
-                listToUse.splice(startMark, 0, range[0]);
-                //startMark = (startMark + 1).mod(listToUse.length);
-            }
-        } else {
-            var tempLen = listToUse.length;
-
-            if (!endBool) {
-                tempLen++;
-            }
-
-            if (!startBool) {
-                console.log("Truly added sta: " + startMark + " value: " + range[0]);
-                listToUse.splice(startMark, 0, range[0]);
-                //startMark = (startMark + 1).mod(tempLen);
-            }
-            if (!endBool) {
-                console.log("Truly added end: " + endMark + " value: " + range[1]);
-                listToUse.splice(endMark, 0, range[1]);
-                //endMark = (endMark + 1).mod(listToUse.length);
-            }
+        for (var i = 0; i < removeList.length; i++) {
+            listToUse.splice(removeList[i], 1);
         }
 
-        console.log("Okay... " + startMark + ", " + endMark + " len: " + listToUse.length + " sb:" + startBool + " eb: " + endBool);
-
-        /*if (startBool && endBool) {
-            startMark = (startMark - 1).mod(listToUse.length);
-        }*/
-
-        for (var i = 0; i < listToUse.length; i++) {
-            console.log("Hands are clean: " + i + " " + listToUse[i]);
+        if (startBool) {
+            listToUse.splice(getAngleIndex(listToUse, range[0][0]), 0, range[0]);
         }
-
-        var startDist = (listToUse[startMark][0] - range[0][0]).mod(360);
-        var endDist = (listToUse[endMark][0] - range[1][0]).mod(360);
-
-        if (startMark != endMark && listToUse.length > 2) {
-            console.log("I really should get rid of someone.");
-            var diff = (endMark - startMark);
-
-            if (endMark > startMark) {
-                for (var i = endMark; i > (endMark - diff); i--) {
-                    console.log("#lolRekt1 " + (i).mod(listToUse.length) + " value: " + listToUse[(i).mod(listToUse.length)][0]);
-                    listToUse.splice((i).mod(listToUse.length), 1);
-                }
-            } else {
-                for (var i = endMark - 1; i >= 0; i--) {
-                    console.log("#lolRekt2 " + (i).mod(listToUse.length) + " value: " + listToUse[(i).mod(listToUse.length)][0]);
-                    listToUse.splice((i).mod(listToUse.length), 1);
-                    startMark = (startMark - 1).mod(listToUse.length);
-                }
-                console.log("Secret agent! Keep out: " + (listToUse.length - 1) + " to " + startMark);
-                for (var i = listToUse.length - 1; i > startMark; i--) {
-                    console.log("#lolRekt3 " + (i).mod(listToUse.length) + " value: " + listToUse[(i).mod(listToUse.length)][0]);
-                    listToUse.splice((i).mod(listToUse.length), 1);
-                }
-            }
-        } else if (startMark != endMark) {
-            console.log("startMark: " + startMark + " endMark " + endMark);
-        } else if (startMark == endMark && startBool && endBool && startDist < endDist) {
-            for (var i = listToUse.length - 1; i >= 0; i--) {
-                console.log("#lolRekt4 " + (i).mod(listToUse.length) + " value: " + listToUse[(i).mod(listToUse.length)][0]);
-                listToUse.splice((i).mod(listToUse.length), 1);
-            }
+        if (endBool) {
+            listToUse.splice(getAngleIndex(listToUse, range[1][0]), 0, range[1]);
         }
 
         return listToUse;
@@ -839,132 +700,34 @@ console.log("Running Red Bot!");
                 }
 
                 var goodAngles = [];
-                //TODO: Add wall angles here. Hardcoding temporary values.
-                if (player[0].x < 1000 && badAngles.length > 0) {
-                    //LEFT
-                    //console.log("Left");
-                    var wallI = 1;
-                    if (!interNodes.hasOwnProperty(wallI)) {
-                        console.log("Creating Wall");
-                        var newX = -100 - screenDistance();
-                        console.log("Got distance");
-                        var n = f.createFake(wallI, newX, player[0].y, player[0].size * 10, "#000", false, "Left Wall");
-                        console.log("n ID: " + n.id);
-                        delete getCells()[wallI];
-                        getCellsArray().pop();
-
-                        interNodes[wallI] = n;
-                        interNodes[wallI].L = getUpdate();
-                        //console.log("Added corner enemy");
-                    } else {
-                        //console.log("Update Wall!");
-                        interNodes[wallI].L = getUpdate();
-                        interNodes[wallI].y = player[0].y;
-                    }
-                } else if (player[0].x < 1000 && interNodes.hasOwnProperty(1)) {
-                    delete interNodes[1];
-                }
-                if (player[0].y < 1000 && badAngles.length > 0) {
-                    //TOP
-                    //console.log("TOP");
-                    var wallI = 2;
-                    if (!interNodes.hasOwnProperty(wallI)) {
-                        console.log("Creating Wall");
-                        var newY = -100 - screenDistance();
-                        console.log("Got distance");
-                        var n = f.createFake(wallI, player[0].x, newY, player[0].size * 10, "#000", false, "Top Wall");
-                        console.log("n ID: " + n.id);
-                        delete getCells()[wallI];
-                        getCellsArray().pop();
-
-                        interNodes[wallI] = n;
-                        interNodes[wallI].L = getUpdate();
-                        //console.log("Added corner enemy");
-                    } else {
-                        //console.log("Update Wall!");
-                        interNodes[wallI].L = getUpdate();
-                        interNodes[wallI].x = player[0].x;
-                    }
-                } else if (player[0].y < 1000 && interNodes.hasOwnProperty(2)) {
-                    delete interNodes[2];
-                }
-                if (player[0].x > 11180 - 1000 && badAngles.length > 0) {
-                    //RIGHT
-                    //console.log("RIGHT");
-                    var wallI = 3;
-                    if (!interNodes.hasOwnProperty(wallI)) {
-                        console.log("Creating Wall");
-                        var newX = 11180 + 100 + screenDistance();
-                        console.log("Got distance");
-                        var n = f.createFake(wallI, newX, player[0].y, player[0].size * 10, "#000", false, "Right Wall");
-                        console.log("n ID: " + n.id);
-                        delete getCells()[wallI];
-                        getCellsArray().pop();
-
-                        interNodes[wallI] = n;
-                        interNodes[wallI].L = getUpdate();
-                        //console.log("Added corner enemy");
-                    } else {
-                        //console.log("Update Wall!");
-                        interNodes[wallI].L = getUpdate();
-                        interNodes[wallI].y = player[0].y;
-                    }
-                } else if (player[0].x > 11180 - 1000 && interNodes.hasOwnProperty(3)) {
-                    delete interNodes[3];
-                }
-                if (player[0].y > 11180 - 1000 && badAngles.length > 0) {
-                    //BOTTOM
-                    //console.log("BOTTOM");
-                    var wallI = 4;
-                    if (!interNodes.hasOwnProperty(wallI)) {
-                        console.log("Creating Wall");
-                        var newY = 11180 + 100 + screenDistance();
-                        console.log("Got distance");
-                        var n = f.createFake(wallI, player[0].x, newY, player[0].size * 10, "#000", false, "Bottom Wall");
-                        console.log("n ID: " + n.id);
-                        delete getCells()[wallI];
-                        getCellsArray().pop();
-
-                        interNodes[wallI] = n;
-                        interNodes[wallI].L = getUpdate();
-                        //console.log("Added corner enemy");
-                    } else {
-                        //console.log("Update Wall!");
-                        interNodes[wallI].L = getUpdate();
-                        interNodes[wallI].x = player[0].x;
-                    }
-                } else if (player[0].y > 11180 - 1000 && interNodes.hasOwnProperty(4)) {
-                    delete interNodes[4];
-                }
-
                 var stupidList = [];
+                if (badAngles.length > 0) {
+                    //NOTE: This is only bandaid wall code. It's not the best way to do it.
+                    stupidList = addWall(stupidList, player[0]);
+                }
 
                 for (var i = 0; i < badAngles.length; i++) {
                     var angle1 = badAngles[i][0];
                     var angle2 = rangeToAngle(badAngles[i]);
                     stupidList.push([[angle1, true], [angle2, false]]);
-
                 }
 
-                /*stupidList.push([[0, true], [90, false]]);
-                stupidList.push([[100, true], [120, false]]);
-                stupidList.push([[45, true], [150, false]]);
-                stupidList.push([[60, true], [140, false]]);
-                stupidList.push([[270, true], [300, false]]);
-                stupidList.push([[45, true], [20, false]]);*/
+                //stupidList.push([[45, true], [135, false]]);
+                //stupidList.push([[10, true], [200, false]]);
 
-                console.log("Added random noob stuff.");
+                //console.log("Added random noob stuff.");
 
                 var sortedInterList = [];
 
                 for (var i = 0; i < stupidList.length; i++) {
-                    console.log("Adding: " + stupidList[i][0][0] + ", " + stupidList[i][1][0]);
+                    //console.log("Adding to sorted: " + stupidList[i][0][0] + ", " + stupidList[i][1][0]);
                     sortedInterList = addAngle(sortedInterList, stupidList[i])
 
                     if (sortedInterList.length == 0) {
                         break;
                     }
                 }
+
 
                 var offsetI = 0;
 
@@ -978,27 +741,21 @@ console.log("Running Red Bot!");
                     var angle2 = sortedInterList[(i + 1 + offsetI).mod(sortedInterList.length)][0];
                     var diff = (angle2 - angle1).mod(360);
                     goodAngles.push([angle1, diff]);
-                    console.log("Yo man! Cool stuff added man! " + angle1 + ", " + diff + ", " + angle2 + " len: " + sortedInterList.length);
                 }
 
-
-                console.log("Already done? That was quick.");
-
                 for (var i = 0; i < goodAngles.length; i++) {
-                    if (goodAngles[i][0] != goodAngles[i][1].mod(360)) {
+                    var line1 = followAngle(goodAngles[i][0], player[0].x, player[0].y, 100 + player[0].size);
+                    var line2 = followAngle((goodAngles[i][0] + goodAngles[i][1]).mod(360), player[0].x, player[0].y, 100 + player[0].size);
+                    drawLine(player[0].x, player[0].y, line1[0], line1[1], 1);
+                    drawLine(player[0].x, player[0].y, line2[0], line2[1], 1);
 
-                        var line1 = followAngle(goodAngles[i][0], player[0].x, player[0].y, 100 + player[0].size);
-                        var line2 = followAngle((goodAngles[i][0] + goodAngles[i][1]).mod(360), player[0].x, player[0].y, 100 + player[0].size);
-                        drawLine(player[0].x, player[0].y, line1[0], line1[1], 1);
-                        drawLine(player[0].x, player[0].y, line2[0], line2[1], 1);
 
-                        drawArc(line1[0], line1[1], line2[0], line2[1], player[0].x, player[0].y, 1);
+                    drawArc(line1[0], line1[1], line2[0], line2[1], player[0].x, player[0].y, 1);
 
-                        //drawPoint(player[0].x, player[0].y, 2, "");
+                    //drawPoint(player[0].x, player[0].y, 2, "");
 
-                        drawPoint(line1[0], line1[1], 0, "" + i + ": 0");
-                        drawPoint(line2[0], line2[1], 0, "" + i + ": 1");
-                    }
+                    drawPoint(line1[0], line1[1], 0, "" + i + ": 0");
+                    drawPoint(line2[0], line2[1], 0, "" + i + ": 1");
                 }
 
                 if (goodAngles.length > 0) {
@@ -1012,15 +769,14 @@ console.log("Running Red Bot!");
                         }
                     }
                     var perfectAngle = (bIndex[0] + bIndex[1] / 2).mod(360);
-                    //console.log("perfectAngle " + perfectAngle);
                     var line1 = followAngle(perfectAngle, player[0].x, player[0].y, 300);
 
                     drawLine(player[0].x, player[0].y, line1[0], line1[1], 7);
                     tempMoveX = line1[0];
                     tempMoveY = line1[1];
                 } else if (badAngles.length > 0 && goodAngles == 0) {
-                    //TODO: CODE TO HANDLE WHEN THERE IS NO GOOD ANGLE BY THERE ARE ENEMIES AROUND!!!!!!!!!!!!!
-                } else {
+                    //TODO: CODE TO HANDLE WHEN THERE IS NO GOOD ANGLE BUT THERE ARE ENEMIES AROUND!!!!!!!!!!!!!
+                } else if (clusterAllFood.length > 0) {
                     for (var i = 0; i < clusterAllFood.length; i++) {
                         //console.log("mefore: " + clusterAllFood[i][2]);
                         //This is the cost function. Higher is better.
@@ -1055,6 +811,8 @@ console.log("Running Red Bot!");
                     tempMoveX = clusterAllFood[bestFoodI][0];
                     tempMoveY = clusterAllFood[bestFoodI][1];
                     drawLine(player[0].x, player[0].y, tempMoveX, tempMoveY, 1);
+                } else {
+                    //If there are no enemies around and no food to eat.
                 }
 
                 drawPoint(tempPoint[0], tempPoint[1], tempPoint[2], "");
@@ -1065,7 +823,7 @@ console.log("Running Red Bot!");
             }
             //console.log("MOVING RIGHT NOW!");
 
-            console.log("______Never lied ever in my life.");
+            //console.log("______Never lied ever in my life.");
 
             return [tempMoveX, tempMoveY];
         }
