@@ -2,7 +2,7 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     2.01
+// @version     2.05
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -17,7 +17,7 @@ Array.prototype.peek = function() {
 };
 
 
-$.get('https://raw.githubusercontent.com/Rednelss/Agar.io-bot/master/bot.user.js?1', function(data) {
+$.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/bot.user.js?1', function(data) {
     var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
     latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
 
@@ -27,17 +27,17 @@ $.get('https://raw.githubusercontent.com/Rednelss/Agar.io-bot/master/bot.user.js
 	if(latestVersion > myVersion)
 	{
 		alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/Rednelss/Agar.io-bot/blob/master/bot.user.js','_blank');
+        window.open('https://github.com/rednelss/Agar.io-bot/blob/master/bot.user.js','_blank');
 	}
 	console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
 
 
 
-console.log("Running Rednelss Bot!");
+console.log("Running rednelss Bot!");
 (function(f, g) {
     var splitDistance = 710;
-    console.log("Rednelss Bot!");
+    console.log("rednelss Bot!");
 
     if (f.botList == null) {
         f.botList = [];
@@ -45,10 +45,10 @@ console.log("Running Rednelss Bot!");
         g('#locationUnknown').addClass('form-group');
     }
 
-    f.botList.push(["RednelssBot", findDestination]);
+    f.botList.push(["rednelssBot", findDestination]);
 
     var bList = g('#bList');
-    g('<option />', {value: (f.botList.length - 1), text: "RednelssBot"}).appendTo(bList);
+    g('<option />', {value: (f.botList.length - 1), text: "rednelssBot"}).appendTo(bList);
 
     //Given an angle value that was gotten from valueAndleBased(),
     //returns a new value that scales it appropriately.
@@ -475,7 +475,7 @@ console.log("Running Rednelss Bot!");
     }
 
     function addWall(listToUse, blob) {
-        if (blob.x < 1000) {
+        if (blob.x < f.getMapStartX() + 1000) {
             //LEFT
             //console.log("Left");
 
@@ -487,7 +487,7 @@ console.log("Running Rednelss Bot!");
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        if (blob.y < 1000) {
+        if (blob.y < f.getMapStartY() + 1000) {
             //TOP
             //console.log("TOP");
             
@@ -499,7 +499,7 @@ console.log("Running Rednelss Bot!");
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        if (blob.x > 11180 - 1000) {
+        if (blob.x > f.getMapEndX() - 1000) {
             //RIGHT
             //console.log("RIGHT");
 
@@ -511,7 +511,7 @@ console.log("Running Rednelss Bot!");
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        if (blob.y > 11180 - 1000) {
+        if (blob.y > f.getMapEndY() - 1000) {
             //BOTTOM
             //console.log("BOTTOM");
 
