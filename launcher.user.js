@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.05
+// @version     2.10
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -961,7 +961,7 @@ console.log("Running Bot Launcher!");
   dArc = [],
   dText = [],
   lines = [],
-  names = ["NotReallyABot"],
+  names = ["vk.com/BotAgar"],
   originalName = names[Math.floor(Math.random() * names.length)],
   sessionScore = 0,
   serverIP = "",
