@@ -2,7 +2,7 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     2.05
+// @version     2.10
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
