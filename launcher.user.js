@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        rednelssLauncher
-// @namespace   rednelssLauncher
+// @name        RednelssLauncher
+// @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.11
+// @version     2.12
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
