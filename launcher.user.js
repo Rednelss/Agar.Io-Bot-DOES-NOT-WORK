@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.12
+// @version     2.13
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -1269,7 +1269,7 @@ console.log("Running Bot Launcher!");
             QA: 'JP-Tokyo',
             RE: 'EU-London',
             RO: 'EU-London',
-            RU: 'RU-Russia',
+            RU: 'EU-London',
             RW: 'EU-London',
             BL: 'US-Atlanta',
             SH: 'EU-London',
