@@ -2,7 +2,7 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     2.12
+// @version     2.13
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -624,13 +624,10 @@ console.log("Running rednelss Bot!");
 
                         console.log("Found distance.");
 
-                        for (var j = 0; j < clusterAllFood.length; j++) {
-                            if (clusterAllFood[j][0] > -100000) {
-                                var secureDistance = (canSplit(player[k], allPossibleThreats[i]) ? splitDistance : player[k].size*2) + allPossibleThreats[i].size;
-                                // HACK: instead of removing from array, just move the cluster point too far.
-                                if (computeDistance(allPossibleThreats[i].x, allPossibleThreats[i].y, clusterAllFood[j][0], clusterAllFood[j][1]) < secureDistance)
-                                    clusterAllFood[j][0] = clusterAllFood[j][1] = -100001;
-                            }
+                        for (var j = clusterAllFood.length - 1; j >= 0 ; j--) {
+                            var secureDistance = (canSplit(player[k], allPossibleThreats[i]) ? splitDistance : player[k].size*2) + allPossibleThreats[i].size;
+                            if (computeDistance(allPossibleThreats[i].x, allPossibleThreats[i].y, clusterAllFood[j][0], clusterAllFood[j][1]) < secureDistance)
+                                clusterAllFood.splice(j, 1);
                         }
 
                         console.log("Removed some food.");
@@ -782,17 +779,14 @@ console.log("Running rednelss Bot!");
 
                             clusterAllFood[i][3] = clusterAngle;
 
-                            // HACK: 
-                            if (clusterAllFood[i][0] > -100)
-                                drawPoint(clusterAllFood[i][0], clusterAllFood[i][1], 1, "");
+                            drawPoint(clusterAllFood[i][0], clusterAllFood[i][1], 1, "");
                             //console.log("After: " + clusterAllFood[i][2]);
                         }
 
                         var bestFoodI = 0;
                         var bestFood = clusterAllFood[0][2];
                         for (var i = 1; i < clusterAllFood.length; i++) {
-                            // HACK:
-                            if (bestFood < clusterAllFood[i][2] && clusterAllFood[i][0] > -100) {
+                            if (bestFood < clusterAllFood[i][2]) {
                                 bestFood = clusterAllFood[i][2];
                                 bestFoodI = i;
                             }
