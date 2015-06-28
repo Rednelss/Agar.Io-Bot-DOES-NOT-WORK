@@ -2,7 +2,7 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     2.15
+// @version     2.20
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -657,7 +657,7 @@ console.log("Running rednelss Bot!");
         return angle;
     }
 
-    function findDestination() {
+    function findDestination(followMouse) {
         var player = getPlayer();
         var interNodes = getMemoryCells();
 
