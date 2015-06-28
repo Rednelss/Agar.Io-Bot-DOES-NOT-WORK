@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.14
+// @version     2.15
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -15,7 +15,7 @@ Array.prototype.peek = function() {
     return this[this.length-1];
 }
 
-$.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?1', function(data) {
+$.get('https://raw.githubusercontent.com/therednelss/Agar.io-bot/master/launcher.user.js?1', function(data) {
     var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
     latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
 
@@ -25,7 +25,7 @@ $.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.us
     if(latestVersion > myVersion)
     {
         alert("Update Available for launcher.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/rednelss/Agar.io-bot/blob/master/launcher.user.js','_blank');
+        window.open('https://github.com/therednelss/Agar.io-bot/blob/master/launcher.user.js','_blank');
     }
     console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
@@ -59,6 +59,10 @@ console.log("Running Bot Launcher!");
                 window.ignoreStream = false;
                 window.refreshTwitch();
             }
+        }
+        if (81 == e.keyCode) {
+            console.log("ToggleFollowMouse");
+            toggleFollow = !toggleFollow;
         }
     }
 
@@ -113,13 +117,16 @@ console.log("Running Bot Launcher!");
             b = !1,
             c = !1;
         h.onkeydown = function (d) {
-            32 != d.keyCode || a || (K(), C(17), a = !0);
-            81 != d.keyCode || b || (C(18), b = !0);
-            87 != d.keyCode || c || (K(), C(21), c = !0);
-            27 == d.keyCode && Ca(!0);
-
             //UPDATE
-            keyAction(d);
+            if (!window.jQuery('#nick').is(":focus")) {
+                32 != d.keyCode || a || (K(), C(17), a = !0);
+                81 != d.keyCode || b || (C(18), b = !0);
+                87 != d.keyCode || c || (K(), C(21), c = !0);
+                27 == d.keyCode && Ca(!0);
+
+                //UPDATE
+                keyAction(d);
+            }
         };
         h.onkeyup = function (d) {
             32 == d.keyCode && (a = !1);
@@ -519,7 +526,7 @@ console.log("Running Bot Launcher!");
         //UPDATE
         if (getPlayer().length == 0 && !reviving && ~~(getCurrentScore() / 100) > 0) {
             console.log("Dead: " + ~~(getCurrentScore() / 100));
-            rednelss('send', 'pageview');
+            therednelss('send', 'pageview');
         }
 
         if (getPlayer().length == 0) {
@@ -622,7 +629,7 @@ console.log("Running Bot Launcher!");
         for (d = 0; d < u.length; d++) u[d].T();
         //UPDATE
         if (getPlayer().length > 0) {
-            var moveLoc = window.botList[botIndex][1]();
+            var moveLoc = window.botList[botIndex][1](toggleFollow);
             if (!toggle) {
                 setPoint(moveLoc[0], moveLoc[1]);
             }
@@ -812,13 +819,17 @@ console.log("Running Bot Launcher!");
         bestTime = Math.max(nbSeconds, bestTime);
 
         var debugStrings = [];
+        debugStrings.push("Current Bot: " + window.botList[botIndex][0]);
         debugStrings.push("T - Bot: " + (!toggle ? "On" : "Off"));
         debugStrings.push("R - Lines: " + (!toggleDraw ? "On" : "Off"));
+        debugStrings.push("Q - Follow Mouse: " + (!toggleFollow ? "On" : "Off"));
         debugStrings.push("Server: " + serverIP);
         debugStrings.push("Survived for: " + nbSeconds + " seconds");
 
         if (getPlayer().length > 0) {
-            debugStrings.push("Location: " + Math.floor(getPlayer()[0].x) + ", " + Math.floor(getPlayer()[0].y));
+            var offsetX = -getMapStartX();
+            var offsetY = -getMapStartY();
+            debugStrings.push("Location: " + Math.floor(getPlayer()[0].x + offsetX) + ", " + Math.floor(getPlayer()[0].y + offsetY));
         }
 
         var offsetValue = 20;
@@ -955,6 +966,7 @@ console.log("Running Bot Launcher!");
         //UPDATE
         toggle = false,
         toggleDraw = false,
+        toggleFollow = false,
         tempPoint = [0, 0, 1],
         dPoints = [],
         circles = [],
@@ -1904,21 +1916,21 @@ window.ignoreStream = false,
         cache: false,
         dataType: "jsonp"
     }).done(function (data) {
-        if (data["stream"] == null) { 
-            //console.log("therednelss is not online!");
-            window.setMessage([]);
-            window.onmouseup = function () {
-            };
-            window.ignoreStream = false;
-        } else {
-            //console.log("therednelss is online!");
-            if (!window.ignoreStream) {
-                window.setMessage(["twitch.tv/therednelss is online right now!", "Click the screen to open the stream!", "Press E to ignore."]);
+        /*if (data["stream"] == null) { 
+                //console.log("therednelss is not online!");
+                window.setMessage([]);
                 window.onmouseup = function () {
-                    window.open("http://www.twitch.tv/therednelss");
                 };
-            }
-        }
+                window.ignoreStream = false;
+            } else {
+                //console.log("therednelss is online!");
+                if (!window.ignoreStream) {
+                    window.setMessage(["twitch.tv/therednelss is online right now!", "Click the screen to open the stream!", "Press E to ignore."]);
+                    window.onmouseup = function () {
+                        window.open("http://www.twitch.tv/therednelss");
+                    };
+                }
+            }*/
     }).fail(function () {
     });
 };
