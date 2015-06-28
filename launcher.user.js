@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.15
+// @version     2.20
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -15,7 +15,7 @@ Array.prototype.peek = function() {
     return this[this.length-1];
 }
 
-$.get('https://raw.githubusercontent.com/therednelss/Agar.io-bot/master/launcher.user.js?1', function(data) {
+$.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?1', function(data) {
     var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
     latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
 
@@ -25,7 +25,7 @@ $.get('https://raw.githubusercontent.com/therednelss/Agar.io-bot/master/launcher
     if(latestVersion > myVersion)
     {
         alert("Update Available for launcher.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/therednelss/Agar.io-bot/blob/master/launcher.user.js','_blank');
+        window.open('https://github.com/rednelss/Agar.io-bot/blob/master/launcher.user.js','_blank');
     }
     console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
@@ -526,7 +526,7 @@ console.log("Running Bot Launcher!");
         //UPDATE
         if (getPlayer().length == 0 && !reviving && ~~(getCurrentScore() / 100) > 0) {
             console.log("Dead: " + ~~(getCurrentScore() / 100));
-            therednelss('send', 'pageview');
+            rednelss('send', 'pageview');
         }
 
         if (getPlayer().length == 0) {
