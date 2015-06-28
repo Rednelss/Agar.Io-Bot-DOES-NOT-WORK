@@ -2,7 +2,7 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     2.14
+// @version     2.15
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -137,12 +137,10 @@ console.log("Running rednelss Bot!");
                 }
             }
 
-            for (var i = 0; i < player.length; i++) {
-                if (!isMe) {
-                    return true;
-                }
-                return false;
+            if (!isMe) {
+                return true;
             }
+            return false;
         }, interNodes);
 
         return dotList;
