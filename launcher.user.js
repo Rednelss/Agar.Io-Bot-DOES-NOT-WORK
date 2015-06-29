@@ -2,7 +2,7 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/
-// @version     2.20
+// @version     2.21
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -79,6 +79,8 @@ console.log("Running Bot Launcher!");
             window.jQuery('#locationUnknown').append(window.jQuery('<select id="bList" class="form-control" onchange="setBotIndex($(this).val());" />'));
             window.jQuery('#locationUnknown').addClass('form-group');
         }
+
+        window.jQuery('#nick').val(originalName);
 
         window.botList.push(["Human", humanPlayer]);
 
