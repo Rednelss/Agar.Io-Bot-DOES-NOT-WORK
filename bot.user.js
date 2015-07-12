@@ -2,7 +2,7 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/
-// @version     2.20
+// @version     2.25
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
@@ -16,7 +16,19 @@ Array.prototype.peek = function() {
     return this[this.length - 1];
 };
 
-$.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/bot.user.js?1', function(data) {
+function update(prefix, name, url) {
+    window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
+    window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
+    window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
+    window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
+    window.jQuery('#' + prefix + 'Link').on('click', function() {
+        window.jQuery("#" + prefix + "Dialog").hide();
+        window.jQuery("#" + prefix + "Dialog").remove();
+    });
+    window.jQuery("#" + prefix + "Dialog").show();
+}
+
+$.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/bot.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
     var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
     latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
 
@@ -25,8 +37,7 @@ $.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/bot.user.js
 
     if(latestVersion > myVersion)
     {
-        alert("Update Available for bot.user.js: V" + latestVersion + "\nGet the latest version from the GitHub page.");
-        window.open('https://github.com/rednelss/Agar.io-bot/blob/master/bot.user.js','_blank');
+        update("rednessBot", "bot.user.js", "https://github.com/rednelss/Agar.io-bot/blob/master/bot.user.js/");
     }
     console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
 });
@@ -44,7 +55,7 @@ console.log("Running rednelss Bot!");
         g('#locationUnknown').addClass('form-group');
     }
 
-    f.botList.push(["rednelssBot", findDestination]);
+    f.botList.push(["rednelssBot " + GM_info.script.version, findDestination]);
 
     var bList = g('#bList');
     g('<option />', {value: (f.botList.length - 1), text: "rednelssBot"}).appendTo(bList);
@@ -161,7 +172,7 @@ console.log("Running rednelss Bot!");
                 }
             }
 
-            if (!isMe && interNodes[element].d && compareSize(interNodes[element], blob, 1.30)) {
+            if (!isMe && interNodes[element].isVirus() && compareSize(interNodes[element], blob, 1.30)) {
                 return true;
             }
             return false;
@@ -185,7 +196,7 @@ console.log("Running rednelss Bot!");
                 }
             }
 
-            if (!isMe && (!interNodes[element].d && compareSize(blob, interNodes[element], 1.30))) {
+            if (!isMe && (!interNodes[element].isVirus() && compareSize(blob, interNodes[element], 1.30))) {
                 return true;
             }
             return false;
@@ -210,7 +221,7 @@ console.log("Running rednelss Bot!");
                 }
             }
 
-            if (!isMe && !interNodes[element].d && compareSize(interNodes[element], blob, 1.30) || (interNodes[element].size <= 11)) {
+            if (!isMe && !interNodes[element].isVirus() && compareSize(interNodes[element], blob, 1.30) || (interNodes[element].size <= 11)) {
                 return true;
             } else {
                 return false;
@@ -417,7 +428,7 @@ console.log("Running rednelss Bot!");
 
         var radius = blob2.size;
 
-        if (blob2.d) {
+        if (blob2.isVirus()) {
             radius = blob1.size;
         } else if(canSplit(blob1, blob2)) {
             radius += splitDistance;
@@ -438,13 +449,13 @@ console.log("Running rednelss Bot!");
         var a = Math.asin(radius / dd);
         var b = Math.atan2(dy, dx);
 
-        var t = b - a
+        var t = b - a;
         var ta = {
             x: radius * Math.sin(t),
             y: radius * -Math.cos(t)
         };
 
-        t = b + a
+        t = b + a;
         var tb = {
             x: radius * -Math.sin(t),
             y: radius * Math.cos(t)
@@ -616,7 +627,7 @@ console.log("Running rednelss Bot!");
         var lineLeft = followAngle(leftAngle, blob1.x, blob1.y, 150 + blob1.size - index * 10);
         var lineRight = followAngle(rightAngle, blob1.x, blob1.y, 150 + blob1.size - index * 10);
 
-        if (blob2.d) {
+        if (blob2.isVirus()) {
             drawLine(blob1.x, blob1.y, lineLeft[0], lineLeft[1], 6);
             drawLine(blob1.x, blob1.y, lineRight[0], lineRight[1], 6);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob1.x, blob1.y, 6);
@@ -775,7 +786,7 @@ console.log("Running rednelss Bot!");
 
                     for (var i = 0; i < stupidList.length; i++) {
                         //console.log("Adding to sorted: " + stupidList[i][0][0] + ", " + stupidList[i][1][0]);
-                        sortedInterList = addAngle(sortedInterList, stupidList[i])
+                        sortedInterList = addAngle(sortedInterList, stupidList[i]);
 
                         if (sortedInterList.length == 0) {
                             break;
@@ -783,7 +794,7 @@ console.log("Running rednelss Bot!");
                     }
 
                     for (var i = 0; i < obstacleList.length; i++) {
-                        sortedObList = addAngle(sortedObList, obstacleList[i])
+                        sortedObList = addAngle(sortedObList, obstacleList[i]);
 
                         if (sortedObList.length == 0) {
                             break;
@@ -930,7 +941,7 @@ console.log("Running rednelss Bot!");
     }
 
     function screenToGameY(y) {
-        return (y - getHeight() / 2) / getRatio() + getY();;
+        return (y - getHeight() / 2) / getRatio() + getY();
     }
 
     function drawPoint(x_1, y_1, drawColor, text) {
