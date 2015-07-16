@@ -6,7 +6,7 @@
 
 **Видео**
 
-https://www.youtube.com/watch?v=T6u4_t7nkJY
+https://www.youtube.com/watch?v=GRaPuJe8s9A
 
 # Горячие клавиши
 
