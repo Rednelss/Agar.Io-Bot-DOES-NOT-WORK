@@ -6,7 +6,7 @@ The aim of the project is to create a bot that can play Agar.io
 
 **Video**
 
-https://www.youtube.com/watch?v=T6u4_t7nkJY
+https://www.youtube.com/watch?v=GRaPuJe8s9A
 
 # Hotkeys
 
