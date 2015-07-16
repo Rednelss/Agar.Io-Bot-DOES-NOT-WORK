@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
-// @include     http://agar.io/
-// @version     2.25
+// @include     http://agar.io/*
+// @version     5.00
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
+
+var rednelssLauncherVersion = 5.00;
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -15,30 +17,45 @@ Array.prototype.peek = function() {
     return this[this.length - 1];
 }
 
-function update(prefix, name, url) {
-    window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
-    window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
-    window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
-    window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
-    window.jQuery('#' + prefix + 'Link').on('click', function() {
-        window.jQuery("#" + prefix + "Dialog").hide();
-        window.jQuery("#" + prefix + "Dialog").remove();
-    });
-    window.jQuery("#" + prefix + "Dialog").show();
+var sha = "ebe77da9d35c0366509ec295407612c100ba3cea";
+function getLatestCommit() {
+    window.jQuery.ajax({
+        url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
+        cache: false,
+        dataType: "jsonp"
+    }).done(function(data) {
+        console.dir(data["data"])
+        console.log("hmm: " + data["data"]["object"]["sha"]);
+        sha = data["data"]["object"]["sha"];
+
+        function update(prefix, name, url) {
+            window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
+            window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
+            window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
+            window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
+            window.jQuery('#' + prefix + 'Link').on('click', function() {
+                window.jQuery("#" + prefix + "Dialog").hide();
+                window.jQuery("#" + prefix + "Dialog").remove();
+            });
+            window.jQuery("#" + prefix + "Dialog").show();
+        }
+
+        window.jQuery.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
+            var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
+            latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
+
+            latestVersion = parseFloat(latestVersion + 0.0000);
+            var myVersion = parseFloat(rednelssLauncherVersion + 0.0000);
+
+            if (latestVersion > myVersion) {
+                update("rednelssLauncher", "launcher.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
+            }
+            console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+        });
+
+    }).fail(function() {});
 }
-
-$.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
-    var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
-    latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
-
-    latestVersion = parseFloat(latestVersion + 0.0000);
-    var myVersion = parseFloat(GM_info.script.version + 0.0000);
-
-    if (latestVersion > myVersion) {
-        update("rednelssLauncher", "launcher.user.js", "https://github.com/rednelss/Agar.io-bot/blob/master/launcher.user.js/");
-    }
-    console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
-});
+getLatestCommit();
 
 console.log("Running Bot Launcher!");
 (function(d, e) {
@@ -52,6 +69,10 @@ console.log("Running Bot Launcher!");
         if (82 == e.keyCode) {
             console.log("ToggleDraw");
             toggleDraw = !toggleDraw;
+        }
+        if (83 == e.keyCode) {
+            selectedCell = (selectedCell + 1).mod(getPlayer().length + 1);
+            console.log("Next Cell " + selectedCell);
         }
         if (68 == e.keyCode) {
             window.setDarkTheme(!getDarkBool());
@@ -170,7 +191,8 @@ console.log("Running Bot Launcher!");
 
     function Ra(a) {
         J *= Math.pow(.9, a.wheelDelta / -120 || a.detail || 0);
-        1 > J && (J = 1);
+        //UPDATE
+        0.3 > J && (J = 0.3);
         J > 4 / h && (J = 4 / h)
     }
 
@@ -198,9 +220,18 @@ console.log("Running Bot Launcher!");
 
     function Aa() {
         //UPDATE
+        if (selectedCell > 0 && selectedCell <= getPlayer().length) {
+            setPoint(((fa - m / 2) / h + s), ((ga - r / 2) / h + t), selectedCell - 1);
+            drawCircle(getPlayer()[selectedCell - 1].x, getPlayer()[selectedCell - 1].y, getPlayer()[selectedCell - 1].size, 8);
+            drawCircle(getPlayer()[selectedCell - 1].x, getPlayer()[selectedCell - 1].y, getPlayer()[selectedCell - 1].size / 2, 8);
+        } else if (selectedCell > getPlayer().length) {
+            selectedCell = 0;
+        }
         if (toggle || window.botList[botIndex][0] == "Human") {
-            ia = (fa - m / 2) / h + s;
-            ja = (ga - r / 2) / h + t
+            var startIndex = (selectedCell == 0 ? 0 : selectedCell - 1);
+            for (var i = 0; i < getPlayer().length - (selectedCell == 0 ? 0 : 1); i++) {
+                setPoint(((fa - m / 2) / h + s) + i, ((ga - r / 2) / h + t) + i, (i + startIndex).mod(getPlayer().length));
+            }
         }
     }
 
@@ -253,7 +284,8 @@ console.log("Running Bot Launcher!");
     function sb() {
         la && (la = !1, setTimeout(function() {
             la = !0
-        }, 6E4 * Ya), d.googletag && d.googletag.pubads && d.googletag.pubads().refresh(d.aa))
+            //UPDATE
+        }, 6E4 * Ya))
     }
 
     function Z(a) {
@@ -517,11 +549,14 @@ console.log("Running Bot Launcher!");
 
             if (isRemoved && (window.getLastUpdate() - interNodes[element].getUptimeTime()) > 3000) {
                 delete interNodes[element];
-            } else if (isRemoved && computeDistance(getOffsetX(), getOffsetY(), interNodes[element].x, interNodes[element].y) < screenDistance()) {
+            } else {
+                for (var i = 0; i < getPlayer().length; i++) {
+                    if (isRemoved && computeDistance(getPlayer()[i].x, getPlayer()[i].y, interNodes[element].x, interNodes[element].y) < getPlayer()[i].size + 710) {
 
-                //console.log("Too close! Remove " + computeDistance(getOffsetX(), getOffsetY(), interNodes[element].x, interNodes[element].y) + " || " + screenDistance());
-
-                delete interNodes[element];
+                        delete interNodes[element];
+                        break;
+                    }
+                }
             }
         });
 
@@ -604,8 +639,10 @@ console.log("Running Bot Launcher!");
         if (T()) {
             a = fa - m / 2;
             var b = ga - r / 2;
-            64 > a * a + b * b || .01 > Math.abs(eb - ia) && .01 > Math.abs(fb - ja) || (eb = ia, fb = ja, a = N(21), a.setUint8(0,
-                                                                                                                                 16), a.setFloat64(1, ia, !0), a.setFloat64(9, ja, !0), a.setUint32(17, 0, !0), O(a))
+            for (var i = 0; i < getPlayer().length; i++) {
+                var tempID = getPlayer()[i].id;
+                64 > a * a + b * b || .01 > Math.abs(eb - ia[i]) && .01 > Math.abs(fb - ja[i]) || (eb = ia[i], fb = ja[i], a = N(21), a.setUint8(0, 16), a.setFloat64(1, ia[i], !0), a.setFloat64(9, ja[i], !0), a.setUint32(17, tempID, !0), O(a))
+            }
         }
     }
 
@@ -620,6 +657,11 @@ console.log("Running Bot Launcher!");
 
     function T() {
         return null != q && q.readyState == q.OPEN
+    }
+
+    window.opCode = function(a) {
+        console.log("Sending op code.");
+        H(parseInt(a));
     }
 
     function H(a) {
@@ -704,8 +746,14 @@ console.log("Running Bot Launcher!");
         //UPDATE
         if (getPlayer().length > 0) {
             var moveLoc = window.botList[botIndex][1](toggleFollow);
+            if (selectedCell > 0) {
+                Aa();
+            }
             if (!toggle) {
-                setPoint(moveLoc[0], moveLoc[1]);
+                var startIndex = (selectedCell == 0 ? 0 : selectedCell);
+                for (var i = 0; i < getPlayer().length - (selectedCell == 0 ? 0 : 1); i++) {
+                    setPoint(moveLoc[(i + startIndex).mod(getPlayer().length)][0], moveLoc[(i + startIndex).mod(getPlayer().length)][1], (i + startIndex).mod(getPlayer().length));
+                }
             }
         }
         customRender(f);
@@ -905,6 +953,7 @@ console.log("Running Bot Launcher!");
         debugStrings.push("T - Bot: " + (!toggle ? "On" : "Off"));
         debugStrings.push("R - Lines: " + (!toggleDraw ? "On" : "Off"));
         debugStrings.push("Q - Follow Mouse: " + (toggleFollow ? "On" : "Off"));
+        debugStrings.push("S - Manual Cell: " + (selectedCell == 0 ? "None" : selectedCell) + " of " + getPlayer().length);
         debugStrings.push("");
         debugStrings.push("Best Score: " + ~~(sessionScore / 100));
         debugStrings.push("Best Time: " + bestTime + " seconds");
@@ -1060,22 +1109,22 @@ console.log("Running Bot Launcher!");
             d.localStorage.loginCache = JSON.stringify(l)
         }
         if (c) {
-            var u = +e("#agario-exp-bar .progress-bar-text").text().split("/")[0],
-                c = +e("#agario-exp-bar .progress-bar-text").text().split("/")[1].split(" ")[0],
-                l = e(".agario-profile-panel .progress-bar-star").text();
+            var u = +e(".agario-exp-bar .progress-bar-text").first().text().split("/")[0],
+                c = +e(".agario-exp-bar .progress-bar-text").first().text().split("/")[1].split(" ")[0],
+                l = e(".agario-profile-panel .progress-bar-star").first().text();
             if (l != a.e) S({
                 f: c,
                 d: c,
                 e: l
             }, function() {
                 e(".agario-profile-panel .progress-bar-star").text(a.e);
-                e("#agario-exp-bar .progress-bar").css("width", "100%");
+                e(".agario-exp-bar .progress-bar").css("width", "100%");
                 e(".progress-bar-star").addClass("animated tada").one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
                                                                       function() {
                                                                           e(".progress-bar-star").removeClass("animated tada")
                                                                       });
                 setTimeout(function() {
-                    e("#agario-exp-bar .progress-bar-text").text(a.d + "/" + a.d + " XP");
+                    e(".agario-exp-bar .progress-bar-text").text(a.d + "/" + a.d + " XP");
                     S({
                         f: 0,
                         d: a.d,
@@ -1092,14 +1141,14 @@ console.log("Running Bot Launcher!");
                         c = (Date.now() - p) / 1E3;
                         c = 0 > c ? 0 : 1 < c ? 1 : c;
                         c = c * c * (3 - 2 * c);
-                        e("#agario-exp-bar .progress-bar-text").text(~~(u + (a.f - u) * c) + "/" + a.d + " XP");
-                        e("#agario-exp-bar .progress-bar").css("width", (88 * (u + (a.f - u) * c) / a.d).toFixed(2) + "%");
+                        e(".agario-exp-bar .progress-bar-text").text(~~(u + (a.f - u) * c) + "/" + a.d + " XP");
+                        e(".agario-exp-bar .progress-bar").css("width", (88 * (u + (a.f - u) * c) / a.d).toFixed(2) + "%");
                         1 > c ? d.requestAnimationFrame(g) : b && b()
                     };
                 d.requestAnimationFrame(g)
             }
         } else e(".agario-profile-panel .progress-bar-star").text(a.e),
-            e("#agario-exp-bar .progress-bar-text").text(a.f + "/" + a.d + " XP"), e("#agario-exp-bar .progress-bar").css("width", (88 * a.f / a.d).toFixed(2) + "%"), b && b()
+            e(".agario-exp-bar .progress-bar-text").text(a.f + "/" + a.d + " XP"), e(".agario-exp-bar .progress-bar").css("width", (88 * a.f / a.d).toFixed(2) + "%"), b && b()
             }
 
     function jb(a) {
@@ -1228,6 +1277,7 @@ console.log("Running Bot Launcher!");
                 botIndex = 0,
                 reviving = false,
                 message = [],
+                selectedCell = 0,
 
                 q = null,
                 s = 0,
@@ -1240,8 +1290,11 @@ console.log("Running Bot Launcher!");
                 F = [],
                 fa = 0,
                 ga = 0,
-                ia = -1,
-                ja = -1,
+
+                //UPDATE
+                ia = [-1],
+                ja = [-1],
+
                 zb = 0,
                 C = 0,
                 ib = 0,
@@ -1655,11 +1708,11 @@ console.log("Running Bot Launcher!");
                 }
 
                 window.getPointX = function() {
-                    return ia;
+                    return ia[0];
                 }
 
                 window.getPointY = function() {
-                    return ja;
+                    return ja[0];
                 }
 
                 window.getMouseX = function() {
@@ -1702,9 +1755,22 @@ console.log("Running Bot Launcher!");
                     return P;
                 }
 
-                window.setPoint = function(x, y) {
-                    ia = x;
-                    ja = y;
+                window.setPoint = function(x, y, index) {
+                    while (ia.length > getPlayer().length) {
+                        ia.pop();
+                        ja.pop();
+                    }
+                    if (index < ia.length) {
+                        ia[index] = x;
+                        ja[index] = y;
+                    } else {
+                        while (index < ia.length - 1) {
+                            ia.push(-1);
+                            ja.push(-1);
+                        }
+                        ia.push(x);
+                        ja.push(y);
+                    }
                 }
 
                 window.setScore = function(a) {
@@ -2247,8 +2313,8 @@ console.log("Running Bot Launcher!");
 rednelss('create', 'UA-62006573-2', 'auto');
 rednelss('send', 'pageview');
 
-window.ignoreStream = false,
-    window.refreshTwitch = function() {
+window.ignoreStream = false;
+window.refreshTwitch = function() {
     $.ajax({
         url: "https://api.twitch.tv/kraken/streams/therednelss",
         cache: false,
@@ -2269,6 +2335,6 @@ window.ignoreStream = false,
             }
         }
     }).fail(function() {});
-};
+}
 setInterval(window.refreshTwitch, 60000);
 window.refreshTwitch();
