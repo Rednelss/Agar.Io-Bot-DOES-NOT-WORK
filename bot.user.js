@@ -2,12 +2,12 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/*
-// @version     5.00
+// @version     5.001
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
 
-var rednelssBotVersion = 5.00;
+var rednelssBotVersion = 5.001;
 
 //TODO: Team mode
 //      Detect when people are merging
@@ -76,7 +76,7 @@ console.log("Running rednelss Bot!");
         g('#locationUnknown').addClass('form-group');
     }
 
-    for (var i = f.botList.length - 1; i >= 0; i++) {
+    for (var i = f.botList.length - 1; i >= 0; i--) {
         if (f.botList[i][0] == "Human") {
             f.botList.splice(i, 1);
         }
