@@ -2,12 +2,12 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/*
-// @version     5.01
+// @version     5.02
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
 
-var rednelssLauncherVersion = 5.01;
+var rednelssLauncherVersion = 5.02;
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -20,40 +20,40 @@ Array.prototype.peek = function() {
 var sha = "ebe77da9d35c0366509ec295407612c100ba3cea";
 function getLatestCommit() {
     window.jQuery.ajax({
-        url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
-        cache: false,
-        dataType: "jsonp"
-    }).done(function(data) {
-        console.dir(data["data"])
-        console.log("hmm: " + data["data"]["object"]["sha"]);
-        sha = data["data"]["object"]["sha"];
+            url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
+            cache: false,
+            dataType: "jsonp"
+        }).done(function(data) {
+            console.dir(data["data"])
+            console.log("hmm: " + data["data"]["object"]["sha"]);
+            sha = data["data"]["object"]["sha"];
 
-        function update(prefix, name, url) {
-            window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
-            window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
-            window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
-            window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
-            window.jQuery('#' + prefix + 'Link').on('click', function() {
-                window.jQuery("#" + prefix + "Dialog").hide();
-                window.jQuery("#" + prefix + "Dialog").remove();
-            });
-            window.jQuery("#" + prefix + "Dialog").show();
-        }
-
-        window.jQuery.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
-            var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
-            latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
-
-            latestVersion = parseFloat(latestVersion + 0.0000);
-            var myVersion = parseFloat(rednelssLauncherVersion + 0.0000);
-
-            if (latestVersion > myVersion) {
-                update("rednelssLauncher", "launcher.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
+            function update(prefix, name, url) {
+                window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
+                window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
+                window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
+                window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
+                window.jQuery('#' + prefix + 'Link').on('click', function() {
+                    window.jQuery("#" + prefix + "Dialog").hide();
+                    window.jQuery("#" + prefix + "Dialog").remove();
+                });
+                window.jQuery("#" + prefix + "Dialog").show();
             }
-            console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
-        });
 
-    }).fail(function() {});
+            window.jQuery.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
+                var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
+                latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
+
+                latestVersion = parseFloat(latestVersion + 0.0000);
+                var myVersion = parseFloat(rednelssLauncherVersion + 0.0000);
+
+                if (latestVersion > myVersion) {
+                    update("rednelssLauncher", "launcher.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
+                }
+                console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+            });
+
+        }).fail(function() {});
 }
 getLatestCommit();
 
@@ -214,10 +214,10 @@ console.log("Running Bot Launcher!");
                 !g.N() || g.R || 20 >= g.size * h || (d = Math.max(g.size, d), a = Math.min(g.x, a), b = Math.min(g.y, b), c = Math.max(g.x, c), l = Math.max(g.y, l))
             }
             X = rb.ka({
-                ca: a - d + 100,
-                da: b - d + 100,
-                oa: c + d + 100,
-                pa: l + d + 100,
+                ca: a - 10,
+                da: b - 10,
+                oa: c + 10,
+                pa: l + 10,
                 ma: 2,
                 na: 4
             });
@@ -305,14 +305,14 @@ console.log("Running Bot Launcher!");
     function Za() {
         var a = ++Ba;
         console.log("Find " + y + P);
-        e.ajax("https://m.agar.io/", {
+        e.ajax("https://m.agar.io/findServer", {
             error: function() {
                 setTimeout(Za, 1E3)
             },
             success: function(b) {
-                a == Ba && (b = b.split("\n"), b[2] && alert(b[2]), Ca("ws://" + b[0], b[1]))
+                a == Ba && (b.alert && alert(b.alert), Ca("ws://" + b.ip, b.token))
             },
-            dataType: "text",
+            dataType: "json",
             method: "POST",
             cache: !1,
             crossDomain: !0,
@@ -343,8 +343,7 @@ console.log("Running Bot Launcher!");
         }
         if (tb) {
             var d = a.split(":");
-            a = d[0] + "s://ip-" + d[1].replace(/\./g, "-").replace(/\//g,
-                "") + ".tech.agar.io:" + (+d[2] + 2E3)
+            a = d[0] + "s://ip-" + d[1].replace(/\./g, "-").replace(/\//g, "") + ".tech.agar.io:" + (+d[2] + 2E3)
         }
         M = [];
         k = [];
@@ -365,7 +364,7 @@ console.log("Running Bot Launcher!");
             console.log("socket open");
             a = N(5);
             a.setUint8(0, 254);
-            a.setUint32(1, 4, !0);
+            a.setUint32(1, 5, !0);
             O(a);
             a = N(5);
             a.setUint8(0, 255);
@@ -637,21 +636,25 @@ console.log("Running Bot Launcher!");
         }
 
         if (getPlayer().length == 0) {
-            console.log("Revive");
-            setNick(originalName);
-            reviving = true;
+            if ((d.localStorage.wannaLogin != null && fbDone) || d.localStorage.wannaLogin == null) {
+                console.log("Revive " + d.localStorage.wannaLogin);
+                setNick(originalName);
+                reviving = true;
+            } else {
+                console.log("Wait!");
+            }
         } else if (getPlayer().length > 0 && reviving) {
             reviving = false;
         }
         
         
-        var a;
         if (T()) {
-            a = fa - m / 2;
+            var a = fa - m / 2;
             var b = ga - r / 2;
             for (var i = 0; i < getPlayer().length; i++) {
                 var tempID = getPlayer()[i].id;
-                64 > a * a + b * b || .01 > Math.abs(eb - ia[i]) && .01 > Math.abs(fb - ja[i]) || (eb = ia[i], fb = ja[i], a = N(21), a.setUint8(0, 16), a.setFloat64(1, ia[i], !0), a.setFloat64(9, ja[i], !0), a.setUint32(17, tempID, !0), O(a))
+                64 > a * a + b * b || .01 > Math.abs(eb - ia[i]) &&
+                    .01 > Math.abs(fb - ja[i]) || (eb = ia[i], fb = ja[i], a = N(13), a.setUint8(0, 16), a.setInt32(1, ia[i], !0), a.setInt32(5, ja[i], !0), a.setUint32(9, tempID, !0), O(a))
             }
         }
     }
@@ -1173,9 +1176,11 @@ console.log("Running Bot Launcher!");
                         1 > c ? d.requestAnimationFrame(g) : b && b()
                     };
                 d.requestAnimationFrame(g)
+
             }
         } else e(".agario-profile-panel .progress-bar-star").text(a.e),
             e(".agario-exp-bar .progress-bar-text").text(a.f + "/" + a.d + " XP"), e(".agario-exp-bar .progress-bar").css("width", (88 * a.f / a.d).toFixed(2) + "%"), b && b()
+
     }
 
     function jb(a) {
@@ -1198,7 +1203,9 @@ console.log("Running Bot Launcher!");
             e: +a[4],
             f: +a[5],
             d: +a[6]
-        })
+        });
+        fbDone = true;
+        console.log("Hello Facebook?");
     }
 
     function La(a) {
@@ -1211,6 +1218,7 @@ console.log("Running Bot Launcher!");
             e("#helloContainer").attr("data-logged-in", "1");
             null != B ? e.ajax("https://m.agar.io/checkToken", {
                 error: function() {
+                    console.log("Facebook Fail!");
                     B = null;
                     La(a)
                 },
@@ -1220,7 +1228,9 @@ console.log("Running Bot Launcher!");
                         e: +a[0],
                         f: +a[1],
                         d: +a[2]
-                    })
+                    });
+                    fbDone = true;
+                    console.log("Facebook connected!");
                 },
                 dataType: "text",
                 method: "POST",
@@ -1229,6 +1239,7 @@ console.log("Running Bot Launcher!");
                 data: B
             }) : e.ajax("https://m.agar.io/facebookLogin", {
                 error: function() {
+                    console.log("You have a Facebook problem!");
                     B = null;
                     e("#helloContainer").attr("data-logged-in", "0")
                 },
@@ -1305,6 +1316,7 @@ console.log("Running Bot Launcher!");
                 reviving = false,
                 message = [],
                 selectedCell = 0,
+                fbDone = false,
 
                 q = null,
                 s = 0,
@@ -2261,6 +2273,7 @@ console.log("Running Bot Launcher!");
                     delete d.localStorage.wannaLogin;
                     delete d.localStorage.loginCache;
                     delete d.localStorage.fbPictureCache;
+                    fbDone = false;
                     I()
                 };
                 var Fb = function() {
