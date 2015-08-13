@@ -20,40 +20,40 @@ Array.prototype.peek = function() {
 var sha = "ebe77da9d35c0366509ec295407612c100ba3cea";
 function getLatestCommit() {
     window.jQuery.ajax({
-            url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
-            cache: false,
-            dataType: "jsonp"
-        }).done(function(data) {
-            console.dir(data["data"])
-            console.log("hmm: " + data["data"]["object"]["sha"]);
-            sha = data["data"]["object"]["sha"];
+        url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
+        cache: false,
+        dataType: "jsonp"
+    }).done(function(data) {
+        console.dir(data["data"])
+        console.log("hmm: " + data["data"]["object"]["sha"]);
+        sha = data["data"]["object"]["sha"];
 
-            function update(prefix, name, url) {
-                window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
-                window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
-                window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
-                window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
-                window.jQuery('#' + prefix + 'Link').on('click', function() {
-                    window.jQuery("#" + prefix + "Dialog").hide();
-                    window.jQuery("#" + prefix + "Dialog").remove();
-                });
-                window.jQuery("#" + prefix + "Dialog").show();
-            }
-
-            window.jQuery.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
-                var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
-                latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
-
-                latestVersion = parseFloat(latestVersion + 0.0000);
-                var myVersion = parseFloat(rednelssLauncherVersion + 0.0000);
-
-                if (latestVersion > myVersion) {
-                    update("rednelssLauncher", "launcher.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
-                }
-                console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+        function update(prefix, name, url) {
+            window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
+            window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
+            window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
+            window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
+            window.jQuery('#' + prefix + 'Link').on('click', function() {
+                window.jQuery("#" + prefix + "Dialog").hide();
+                window.jQuery("#" + prefix + "Dialog").remove();
             });
+            window.jQuery("#" + prefix + "Dialog").show();
+        }
 
-        }).fail(function() {});
+        window.jQuery.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
+            var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
+            latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
+
+            latestVersion = parseFloat(latestVersion + 0.0000);
+            var myVersion = parseFloat(rednelssLauncherVersion + 0.0000);
+
+            if (latestVersion > myVersion) {
+                update("rednelssLauncher", "launcher.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
+            }
+            console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+        });
+
+    }).fail(function() {});
 }
 getLatestCommit();
 
@@ -225,7 +225,7 @@ console.log("Running Bot Launcher!");
                 if (g = v[p],
                     g.N() && !(20 >= g.size * h))
                     for (a = 0; a < g.a.length; ++a) b = g.a[a].x, c = g.a[a].y, b < s - m / 2 / h || c < t - r / 2 / h || b > s + m / 2 / h || c > t + r / 2 / h || X.m(g.a[a])
-        }
+                        }
     }
 
     function Aa() {
@@ -241,7 +241,7 @@ console.log("Running Bot Launcher!");
             var startIndex = (selectedCell == 0 ? 0 : selectedCell - 1);
             for (var i = 0; i < getPlayer().length - (selectedCell == 0 ? 0 : 1); i++) {
                 setPoint(((fa - m / 2) / h + s) + i, ((ga - r / 2) / h + t) + i, (i + startIndex).mod(getPlayer().length));
-                }
+            }
         }
     }
 
@@ -252,16 +252,16 @@ console.log("Running Bot Launcher!");
             b && (ka[b] = a.text())
         }));
         e.get("https://m.agar.io/info", function(a) {
-                var b = {},
-                    c;
-                for (c in a.regions) {
-                    var l = c.split(":")[0];
-                    b[l] = b[l] || 0;
-                    b[l] += a.regions[c].numPlayers
-                }
-                for (c in b) e('#region option[value="' + c + '"]').text(ka[c] + " (" + b[c] + " players)")
-            },
-            "json")
+            var b = {},
+                c;
+            for (c in a.regions) {
+                var l = c.split(":")[0];
+                b[l] = b[l] || 0;
+                b[l] += a.regions[c].numPlayers
+            }
+            for (c in b) e('#region option[value="' + c + '"]').text(ka[c] + " (" + b[c] + " players)")
+                },
+              "json")
     }
 
     function Xa() {
@@ -294,7 +294,7 @@ console.log("Running Bot Launcher!");
     function sb() {
         la && (la = !1, setTimeout(function() {
             la = !0
-        //UPDATE
+            //UPDATE
         }, 6E4 * Ya))
     }
 
@@ -506,7 +506,7 @@ console.log("Running Bot Launcher!");
                 g = E[a.getUint32(b + 4, !0)];
             b += 8;
             p && g && (g.X(), g.s = g.x, g.t = g.y, g.r = g.size, g.J = p.x, g.K = p.y, g.q = g.size, g.Q =
-                C)
+                       C)
         }
         for (u = 0;;) {
             d = a.getUint32(b, !0);
@@ -536,7 +536,7 @@ console.log("Running Bot Launcher!");
             q = n;
             n = null;
             E.hasOwnProperty(d) ? (n = E[d], n.P(), n.s = n.x, n.t = n.y, n.r = n.size, n.color = h) :
-                (n = new da(d, p, g, f, h, q), v.push(n), E[d] = n, n.ua = p, n.va = g);
+            (n = new da(d, p, g, f, h, q), v.push(n), E[d] = n, n.ua = p, n.va = g);
             n.h = m;
             n.n = r;
             n.J = p;
@@ -646,8 +646,8 @@ console.log("Running Bot Launcher!");
         } else if (getPlayer().length > 0 && reviving) {
             reviving = false;
         }
-        
-        
+
+
         if (T()) {
             var a = fa - m / 2;
             var b = ga - r / 2;
@@ -771,7 +771,7 @@ console.log("Running Bot Launcher!");
         f.lineTo(getMapEndX(), getMapEndY());
         f.stroke();
         f.restore();
-        
+
         for (d = 0; d < v.length; d++) v[d].w(f);
         for (d = 0; d < Q.length; d++) Q[d].w(f);
         //UPDATE
@@ -821,7 +821,7 @@ console.log("Running Bot Launcher!");
         var displayText = 'Score: ' + ~~(R / 100) + " Current Time: " + nbSeconds + " seconds.";
 
         0 != R && (null == ua && (ua = new va(24, "#FFFFFF")), ua.C(displayText), c = ua.L(), a = c.width, f.globalAlpha = .2, f.fillStyle = "#000000", f.fillRect(10, r - 10 - 24 - 10, a + 10, 34), f.globalAlpha = 1, f.drawImage(c, 15, r -
-            10 - 24 - 5));
+                                                                                                                                                                                                                                     10 - 24 - 5));
         Cb();
         b = Date.now() - b;
         b > 1E3 / 60 ? D -= .01 : b < 1E3 / 65 && (D += .01);.4 > D && (D = .4);
@@ -1095,7 +1095,7 @@ console.log("Running Bot Launcher!");
                         a.beginPath();
                         a.moveTo(100, 140);
                         a.arc(100,
-                            140, 80, c, d, !1);
+                              140, 80, c, d, !1);
                         a.fill();
                         c = d
                     }
@@ -1150,9 +1150,9 @@ console.log("Running Bot Launcher!");
                 e(".agario-profile-panel .progress-bar-star").text(a.e);
                 e(".agario-exp-bar .progress-bar").css("width", "100%");
                 e(".progress-bar-star").addClass("animated tada").one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                    function() {
-                        e(".progress-bar-star").removeClass("animated tada")
-                    });
+                                                                      function() {
+                                                                          e(".progress-bar-star").removeClass("animated tada")
+                                                                      });
                 setTimeout(function() {
                     e(".agario-exp-bar .progress-bar-text").text(a.d + "/" + a.d + " XP");
                     S({
@@ -1181,7 +1181,7 @@ console.log("Running Bot Launcher!");
         } else e(".agario-profile-panel .progress-bar-star").text(a.e),
             e(".agario-exp-bar .progress-bar-text").text(a.f + "/" + a.d + " XP"), e(".agario-exp-bar .progress-bar").css("width", (88 * a.f / a.d).toFixed(2) + "%"), b && b()
 
-    }
+            }
 
     function jb(a) {
         "string" == typeof a && (a = JSON.parse(a));
@@ -1199,7 +1199,7 @@ console.log("Running Bot Launcher!");
             ta: a[1],
             fa: a[2],
             ja: 1E3 *
-                +a[3],
+            +a[3],
             e: +a[4],
             f: +a[5],
             d: +a[6]
@@ -1265,7 +1265,7 @@ console.log("Running Bot Launcher!");
             success: function(b) {
                 b = b.split("\n");
                 e(".partyToken").val("agar.io/#" +
-                    d.encodeURIComponent(a));
+                                     d.encodeURIComponent(a));
                 e("#helloContainer").attr("data-party-state", "5");
                 Y(":party");
                 Ca("ws://" + b[0], a)
@@ -1286,9 +1286,9 @@ console.log("Running Bot Launcher!");
             tb = "https:" == Na,
             xa = d.navigator.userAgent;
         if (-1 != xa.indexOf("Android")) d.ga && d.ga("send", "event", "MobileRedirect", "PlayStore"), setTimeout(function() {
-                d.location.href = "market://details?id=com.miniclip.agar.io"
-            },
-            1E3);
+            d.location.href = "market://details?id=com.miniclip.agar.io"
+        },
+                                                                                                                  1E3);
         else if (-1 != xa.indexOf("iPhone") || -1 != xa.indexOf("iPad") || -1 != xa.indexOf("iPod")) d.ga && d.ga("send", "event", "MobileRedirect", "AppStore"), setTimeout(function() {
             d.location.href = "https://itunes.apple.com/app/agar.io/id995999703"
         }, 1E3);
@@ -1425,7 +1425,7 @@ console.log("Running Bot Launcher!");
                 };
                 d.setGameMode = function(a) {
                     a != P && (":party" ==
-                        P && e("#helloContainer").attr("data-party-state", "0"), Y(a), ":party" != a && I())
+                               P && e("#helloContainer").attr("data-party-state", "0"), Y(a), ":party" != a && I())
                 };
                 d.setAcid = function(a) {
                     Ia = a
@@ -1446,251 +1446,251 @@ console.log("Running Bot Launcher!");
                     la = !0
                 }, Math.max(6E4 * Ya, 1E4));
                 var ea = {
-                        AF: "JP-Tokyo",
-                        AX: "EU-London",
-                        AL: "EU-London",
-                        DZ: "EU-London",
-                        AS: "SG-Singapore",
-                        AD: "EU-London",
-                        AO: "EU-London",
-                        AI: "US-Atlanta",
-                        AG: "US-Atlanta",
-                        AR: "BR-Brazil",
-                        AM: "JP-Tokyo",
-                        AW: "US-Atlanta",
-                        AU: "SG-Singapore",
-                        AT: "EU-London",
-                        AZ: "JP-Tokyo",
-                        BS: "US-Atlanta",
-                        BH: "JP-Tokyo",
-                        BD: "JP-Tokyo",
-                        BB: "US-Atlanta",
-                        BY: "EU-London",
-                        BE: "EU-London",
-                        BZ: "US-Atlanta",
-                        BJ: "EU-London",
-                        BM: "US-Atlanta",
-                        BT: "JP-Tokyo",
-                        BO: "BR-Brazil",
-                        BQ: "US-Atlanta",
-                        BA: "EU-London",
-                        BW: "EU-London",
-                        BR: "BR-Brazil",
-                        IO: "JP-Tokyo",
-                        VG: "US-Atlanta",
-                        BN: "JP-Tokyo",
-                        BG: "EU-London",
-                        BF: "EU-London",
-                        BI: "EU-London",
-                        KH: "JP-Tokyo",
-                        CM: "EU-London",
-                        CA: "US-Atlanta",
-                        CV: "EU-London",
-                        KY: "US-Atlanta",
-                        CF: "EU-London",
-                        TD: "EU-London",
-                        CL: "BR-Brazil",
-                        CN: "CN-China",
-                        CX: "JP-Tokyo",
-                        CC: "JP-Tokyo",
-                        CO: "BR-Brazil",
-                        KM: "EU-London",
-                        CD: "EU-London",
-                        CG: "EU-London",
-                        CK: "SG-Singapore",
-                        CR: "US-Atlanta",
-                        CI: "EU-London",
-                        HR: "EU-London",
-                        CU: "US-Atlanta",
-                        CW: "US-Atlanta",
-                        CY: "JP-Tokyo",
-                        CZ: "EU-London",
-                        DK: "EU-London",
-                        DJ: "EU-London",
-                        DM: "US-Atlanta",
-                        DO: "US-Atlanta",
-                        EC: "BR-Brazil",
-                        EG: "EU-London",
-                        SV: "US-Atlanta",
-                        GQ: "EU-London",
-                        ER: "EU-London",
-                        EE: "EU-London",
-                        ET: "EU-London",
-                        FO: "EU-London",
-                        FK: "BR-Brazil",
-                        FJ: "SG-Singapore",
-                        FI: "EU-London",
-                        FR: "EU-London",
-                        GF: "BR-Brazil",
-                        PF: "SG-Singapore",
-                        GA: "EU-London",
-                        GM: "EU-London",
-                        GE: "JP-Tokyo",
-                        DE: "EU-London",
-                        GH: "EU-London",
-                        GI: "EU-London",
-                        GR: "EU-London",
-                        GL: "US-Atlanta",
-                        GD: "US-Atlanta",
-                        GP: "US-Atlanta",
-                        GU: "SG-Singapore",
-                        GT: "US-Atlanta",
-                        GG: "EU-London",
-                        GN: "EU-London",
-                        GW: "EU-London",
-                        GY: "BR-Brazil",
-                        HT: "US-Atlanta",
-                        VA: "EU-London",
-                        HN: "US-Atlanta",
-                        HK: "JP-Tokyo",
-                        HU: "EU-London",
-                        IS: "EU-London",
-                        IN: "JP-Tokyo",
-                        ID: "JP-Tokyo",
-                        IR: "JP-Tokyo",
-                        IQ: "JP-Tokyo",
-                        IE: "EU-London",
-                        IM: "EU-London",
-                        IL: "JP-Tokyo",
-                        IT: "EU-London",
-                        JM: "US-Atlanta",
-                        JP: "JP-Tokyo",
-                        JE: "EU-London",
-                        JO: "JP-Tokyo",
-                        KZ: "JP-Tokyo",
-                        KE: "EU-London",
-                        KI: "SG-Singapore",
-                        KP: "JP-Tokyo",
-                        KR: "JP-Tokyo",
-                        KW: "JP-Tokyo",
-                        KG: "JP-Tokyo",
-                        LA: "JP-Tokyo",
-                        LV: "EU-London",
-                        LB: "JP-Tokyo",
-                        LS: "EU-London",
-                        LR: "EU-London",
-                        LY: "EU-London",
-                        LI: "EU-London",
-                        LT: "EU-London",
-                        LU: "EU-London",
-                        MO: "JP-Tokyo",
-                        MK: "EU-London",
-                        MG: "EU-London",
-                        MW: "EU-London",
-                        MY: "JP-Tokyo",
-                        MV: "JP-Tokyo",
-                        ML: "EU-London",
-                        MT: "EU-London",
-                        MH: "SG-Singapore",
-                        MQ: "US-Atlanta",
-                        MR: "EU-London",
-                        MU: "EU-London",
-                        YT: "EU-London",
-                        MX: "US-Atlanta",
-                        FM: "SG-Singapore",
-                        MD: "EU-London",
-                        MC: "EU-London",
-                        MN: "JP-Tokyo",
-                        ME: "EU-London",
-                        MS: "US-Atlanta",
-                        MA: "EU-London",
-                        MZ: "EU-London",
-                        MM: "JP-Tokyo",
-                        NA: "EU-London",
-                        NR: "SG-Singapore",
-                        NP: "JP-Tokyo",
-                        NL: "EU-London",
-                        NC: "SG-Singapore",
-                        NZ: "SG-Singapore",
-                        NI: "US-Atlanta",
-                        NE: "EU-London",
-                        NG: "EU-London",
-                        NU: "SG-Singapore",
-                        NF: "SG-Singapore",
-                        MP: "SG-Singapore",
-                        NO: "EU-London",
-                        OM: "JP-Tokyo",
-                        PK: "JP-Tokyo",
-                        PW: "SG-Singapore",
-                        PS: "JP-Tokyo",
-                        PA: "US-Atlanta",
-                        PG: "SG-Singapore",
-                        PY: "BR-Brazil",
-                        PE: "BR-Brazil",
-                        PH: "JP-Tokyo",
-                        PN: "SG-Singapore",
-                        PL: "EU-London",
-                        PT: "EU-London",
-                        PR: "US-Atlanta",
-                        QA: "JP-Tokyo",
-                        RE: "EU-London",
-                        RO: "EU-London",
-                        RU: "RU-Russia",
-                        RW: "EU-London",
-                        BL: "US-Atlanta",
-                        SH: "EU-London",
-                        KN: "US-Atlanta",
-                        LC: "US-Atlanta",
-                        MF: "US-Atlanta",
-                        PM: "US-Atlanta",
-                        VC: "US-Atlanta",
-                        WS: "SG-Singapore",
-                        SM: "EU-London",
-                        ST: "EU-London",
-                        SA: "EU-London",
-                        SN: "EU-London",
-                        RS: "EU-London",
-                        SC: "EU-London",
-                        SL: "EU-London",
-                        SG: "JP-Tokyo",
-                        SX: "US-Atlanta",
-                        SK: "EU-London",
-                        SI: "EU-London",
-                        SB: "SG-Singapore",
-                        SO: "EU-London",
-                        ZA: "EU-London",
-                        SS: "EU-London",
-                        ES: "EU-London",
-                        LK: "JP-Tokyo",
-                        SD: "EU-London",
-                        SR: "BR-Brazil",
-                        SJ: "EU-London",
-                        SZ: "EU-London",
-                        SE: "EU-London",
-                        CH: "EU-London",
-                        SY: "EU-London",
-                        TW: "JP-Tokyo",
-                        TJ: "JP-Tokyo",
-                        TZ: "EU-London",
-                        TH: "JP-Tokyo",
-                        TL: "JP-Tokyo",
-                        TG: "EU-London",
-                        TK: "SG-Singapore",
-                        TO: "SG-Singapore",
-                        TT: "US-Atlanta",
-                        TN: "EU-London",
-                        TR: "TK-Turkey",
-                        TM: "JP-Tokyo",
-                        TC: "US-Atlanta",
-                        TV: "SG-Singapore",
-                        UG: "EU-London",
-                        UA: "EU-London",
-                        AE: "EU-London",
-                        GB: "EU-London",
-                        US: "US-Atlanta",
-                        UM: "SG-Singapore",
-                        VI: "US-Atlanta",
-                        UY: "BR-Brazil",
-                        UZ: "JP-Tokyo",
-                        VU: "SG-Singapore",
-                        VE: "BR-Brazil",
-                        VN: "JP-Tokyo",
-                        WF: "SG-Singapore",
-                        EH: "EU-London",
-                        YE: "JP-Tokyo",
-                        ZM: "EU-London",
-                        ZW: "EU-London"
-                    },
+                    AF: "JP-Tokyo",
+                    AX: "EU-London",
+                    AL: "EU-London",
+                    DZ: "EU-London",
+                    AS: "SG-Singapore",
+                    AD: "EU-London",
+                    AO: "EU-London",
+                    AI: "US-Atlanta",
+                    AG: "US-Atlanta",
+                    AR: "BR-Brazil",
+                    AM: "JP-Tokyo",
+                    AW: "US-Atlanta",
+                    AU: "SG-Singapore",
+                    AT: "EU-London",
+                    AZ: "JP-Tokyo",
+                    BS: "US-Atlanta",
+                    BH: "JP-Tokyo",
+                    BD: "JP-Tokyo",
+                    BB: "US-Atlanta",
+                    BY: "EU-London",
+                    BE: "EU-London",
+                    BZ: "US-Atlanta",
+                    BJ: "EU-London",
+                    BM: "US-Atlanta",
+                    BT: "JP-Tokyo",
+                    BO: "BR-Brazil",
+                    BQ: "US-Atlanta",
+                    BA: "EU-London",
+                    BW: "EU-London",
+                    BR: "BR-Brazil",
+                    IO: "JP-Tokyo",
+                    VG: "US-Atlanta",
+                    BN: "JP-Tokyo",
+                    BG: "EU-London",
+                    BF: "EU-London",
+                    BI: "EU-London",
+                    KH: "JP-Tokyo",
+                    CM: "EU-London",
+                    CA: "US-Atlanta",
+                    CV: "EU-London",
+                    KY: "US-Atlanta",
+                    CF: "EU-London",
+                    TD: "EU-London",
+                    CL: "BR-Brazil",
+                    CN: "CN-China",
+                    CX: "JP-Tokyo",
+                    CC: "JP-Tokyo",
+                    CO: "BR-Brazil",
+                    KM: "EU-London",
+                    CD: "EU-London",
+                    CG: "EU-London",
+                    CK: "SG-Singapore",
+                    CR: "US-Atlanta",
+                    CI: "EU-London",
+                    HR: "EU-London",
+                    CU: "US-Atlanta",
+                    CW: "US-Atlanta",
+                    CY: "JP-Tokyo",
+                    CZ: "EU-London",
+                    DK: "EU-London",
+                    DJ: "EU-London",
+                    DM: "US-Atlanta",
+                    DO: "US-Atlanta",
+                    EC: "BR-Brazil",
+                    EG: "EU-London",
+                    SV: "US-Atlanta",
+                    GQ: "EU-London",
+                    ER: "EU-London",
+                    EE: "EU-London",
+                    ET: "EU-London",
+                    FO: "EU-London",
+                    FK: "BR-Brazil",
+                    FJ: "SG-Singapore",
+                    FI: "EU-London",
+                    FR: "EU-London",
+                    GF: "BR-Brazil",
+                    PF: "SG-Singapore",
+                    GA: "EU-London",
+                    GM: "EU-London",
+                    GE: "JP-Tokyo",
+                    DE: "EU-London",
+                    GH: "EU-London",
+                    GI: "EU-London",
+                    GR: "EU-London",
+                    GL: "US-Atlanta",
+                    GD: "US-Atlanta",
+                    GP: "US-Atlanta",
+                    GU: "SG-Singapore",
+                    GT: "US-Atlanta",
+                    GG: "EU-London",
+                    GN: "EU-London",
+                    GW: "EU-London",
+                    GY: "BR-Brazil",
+                    HT: "US-Atlanta",
+                    VA: "EU-London",
+                    HN: "US-Atlanta",
+                    HK: "JP-Tokyo",
+                    HU: "EU-London",
+                    IS: "EU-London",
+                    IN: "JP-Tokyo",
+                    ID: "JP-Tokyo",
+                    IR: "JP-Tokyo",
+                    IQ: "JP-Tokyo",
+                    IE: "EU-London",
+                    IM: "EU-London",
+                    IL: "JP-Tokyo",
+                    IT: "EU-London",
+                    JM: "US-Atlanta",
+                    JP: "JP-Tokyo",
+                    JE: "EU-London",
+                    JO: "JP-Tokyo",
+                    KZ: "JP-Tokyo",
+                    KE: "EU-London",
+                    KI: "SG-Singapore",
+                    KP: "JP-Tokyo",
+                    KR: "JP-Tokyo",
+                    KW: "JP-Tokyo",
+                    KG: "JP-Tokyo",
+                    LA: "JP-Tokyo",
+                    LV: "EU-London",
+                    LB: "JP-Tokyo",
+                    LS: "EU-London",
+                    LR: "EU-London",
+                    LY: "EU-London",
+                    LI: "EU-London",
+                    LT: "EU-London",
+                    LU: "EU-London",
+                    MO: "JP-Tokyo",
+                    MK: "EU-London",
+                    MG: "EU-London",
+                    MW: "EU-London",
+                    MY: "JP-Tokyo",
+                    MV: "JP-Tokyo",
+                    ML: "EU-London",
+                    MT: "EU-London",
+                    MH: "SG-Singapore",
+                    MQ: "US-Atlanta",
+                    MR: "EU-London",
+                    MU: "EU-London",
+                    YT: "EU-London",
+                    MX: "US-Atlanta",
+                    FM: "SG-Singapore",
+                    MD: "EU-London",
+                    MC: "EU-London",
+                    MN: "JP-Tokyo",
+                    ME: "EU-London",
+                    MS: "US-Atlanta",
+                    MA: "EU-London",
+                    MZ: "EU-London",
+                    MM: "JP-Tokyo",
+                    NA: "EU-London",
+                    NR: "SG-Singapore",
+                    NP: "JP-Tokyo",
+                    NL: "EU-London",
+                    NC: "SG-Singapore",
+                    NZ: "SG-Singapore",
+                    NI: "US-Atlanta",
+                    NE: "EU-London",
+                    NG: "EU-London",
+                    NU: "SG-Singapore",
+                    NF: "SG-Singapore",
+                    MP: "SG-Singapore",
+                    NO: "EU-London",
+                    OM: "JP-Tokyo",
+                    PK: "JP-Tokyo",
+                    PW: "SG-Singapore",
+                    PS: "JP-Tokyo",
+                    PA: "US-Atlanta",
+                    PG: "SG-Singapore",
+                    PY: "BR-Brazil",
+                    PE: "BR-Brazil",
+                    PH: "JP-Tokyo",
+                    PN: "SG-Singapore",
+                    PL: "EU-London",
+                    PT: "EU-London",
+                    PR: "US-Atlanta",
+                    QA: "JP-Tokyo",
+                    RE: "EU-London",
+                    RO: "EU-London",
+                    RU: "RU-Russia",
+                    RW: "EU-London",
+                    BL: "US-Atlanta",
+                    SH: "EU-London",
+                    KN: "US-Atlanta",
+                    LC: "US-Atlanta",
+                    MF: "US-Atlanta",
+                    PM: "US-Atlanta",
+                    VC: "US-Atlanta",
+                    WS: "SG-Singapore",
+                    SM: "EU-London",
+                    ST: "EU-London",
+                    SA: "EU-London",
+                    SN: "EU-London",
+                    RS: "EU-London",
+                    SC: "EU-London",
+                    SL: "EU-London",
+                    SG: "JP-Tokyo",
+                    SX: "US-Atlanta",
+                    SK: "EU-London",
+                    SI: "EU-London",
+                    SB: "SG-Singapore",
+                    SO: "EU-London",
+                    ZA: "EU-London",
+                    SS: "EU-London",
+                    ES: "EU-London",
+                    LK: "JP-Tokyo",
+                    SD: "EU-London",
+                    SR: "BR-Brazil",
+                    SJ: "EU-London",
+                    SZ: "EU-London",
+                    SE: "EU-London",
+                    CH: "EU-London",
+                    SY: "EU-London",
+                    TW: "JP-Tokyo",
+                    TJ: "JP-Tokyo",
+                    TZ: "EU-London",
+                    TH: "JP-Tokyo",
+                    TL: "JP-Tokyo",
+                    TG: "EU-London",
+                    TK: "SG-Singapore",
+                    TO: "SG-Singapore",
+                    TT: "US-Atlanta",
+                    TN: "EU-London",
+                    TR: "TK-Turkey",
+                    TM: "JP-Tokyo",
+                    TC: "US-Atlanta",
+                    TV: "SG-Singapore",
+                    UG: "EU-London",
+                    UA: "EU-London",
+                    AE: "EU-London",
+                    GB: "EU-London",
+                    US: "US-Atlanta",
+                    UM: "SG-Singapore",
+                    VI: "US-Atlanta",
+                    UY: "BR-Brazil",
+                    UZ: "JP-Tokyo",
+                    VU: "SG-Singapore",
+                    VE: "BR-Brazil",
+                    VN: "JP-Tokyo",
+                    WF: "SG-Singapore",
+                    EH: "EU-London",
+                    YE: "JP-Tokyo",
+                    ZM: "EU-London",
+                    ZW: "EU-London"
+                },
                     L = null;
                 d.connect = Ca;
 
@@ -1850,10 +1850,10 @@ console.log("Running Bot Launcher!");
                             l > b && (a = c - l % b, !T() || 240 > Date.now() - bb ? gb() : console.warn("Skipping draw"), Fb())
                         }
                     }(),
-                    U = {},
-                    ob = "vk.com/botagar;poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;chaplin;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8;irs;receita federal;facebook".split(";"),
-                    Gb = ["8", "nasa"],
-                    Hb = ["m'blob"];
+                        U = {},
+                        ob = "vk.com/botagar;poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;chaplin;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8;irs;receita federal;facebook".split(";"),
+                        Gb = ["8", "nasa"],
+                        Hb = ["m'blob"];
                 Ka.prototype = {
                     V: null,
                     x: 0,
@@ -1914,14 +1914,14 @@ console.log("Running Bot Launcher!");
                     B: function(a) {
                         if (this.name = a) null ==
                             this.o ? this.o = new va(this.l(), "#FFFFFF", !0, "#000000") : this.o.M(this.l()), this.o.C(this.name)
-                    },
+                            },
                     W: function() {
                         for (var a = this.I(); this.a.length > a;) {
                             var b = ~~(Math.random() * this.a.length);
                             this.a.splice(b, 1)
                         }
                         for (0 == this.a.length && 0 < a && this.a.push(new Ka(this, this.x, this.y, this.size, Math.random() - .5)); this.a.length < a;) b = ~~(Math.random() * this.a.length), b = this.a[b], this.a.push(new Ka(this, b.x, b.y, b.i, b.b))
-                    },
+                            },
                     I: function() {
                         var a = 10;
                         20 > this.size && (a = 0);
@@ -1953,7 +1953,7 @@ console.log("Running Bot Launcher!");
                                     m = a[c].y;
                                 X.ra(w - 5, m - 5, 10, 10, function(a) {
                                     a.V != p && 25 > (w -
-                                        a.x) * (w - a.x) + (m - a.y) * (m - a.y) && (k = !0)
+                                                      a.x) * (w - a.x) + (m - a.y) * (m - a.y) && (k = !0)
                                 });
                                 !k && (a[c].x < pa || a[c].y < qa || a[c].x > ra || a[c].y > sa) && (k = !0);
                                 k && (0 < a[c].b && (a[c].b = 0), a[c].b -= 1)
@@ -2019,7 +2019,7 @@ console.log("Running Bot Launcher!");
                             a.closePath();
                             d = this.name.toLowerCase();
                             !this.n && kb && ":teams" != P ? -1 != ob.indexOf(d) ? (U.hasOwnProperty(d) || (U[d] = new Image, (d == "vk.com/botagar" ? U[d].src = "http://i.imgur.com/Gituy2K.png" : U[d].src = "skins/" +
-                                d + ".png")), c = 0 != U[d].width && U[d].complete ? U[d] : null) : c = null : c = null;
+                                                                                                                               d + ".png")), c = 0 != U[d].width && U[d].complete ? U[d] : null) : c = null : c = null;
                             c = (e = c) ? -1 != Hb.indexOf(d) : !1;
                             b || a.stroke();
                             a.fill();
@@ -2030,7 +2030,7 @@ console.log("Running Bot Launcher!");
                             c = -1 != k.indexOf(this);
                             b = ~~this.y;
                             if (0 != this.id && (wa || c) && this.name && this.o && (null ==
-                                    e || -1 == Gb.indexOf(d))) {
+                                                                                     e || -1 == Gb.indexOf(d))) {
                                 e = this.o;
                                 e.C(this.name);
                                 e.M(this.l());
@@ -2043,7 +2043,7 @@ console.log("Running Bot Launcher!");
                                 b += e.height / 2 / d + 4
                             }
                             0 < this.id && lb && (c || 0 == k.length && (!this.h || this.n) && 20 < this.size) && (null == this.O && (this.O = new va(this.l() / 2, "#FFFFFF", !0, "#000000")), c = this.O, c.M(this.l() / 2), c.C(~~(this.size * this.size / 100)), d = Math.ceil(10 * h) / 10, c.ea(d), e = c.L(), p = ~~(e.width / d), g = ~~(e.height / d), a.drawImage(e, ~~this.x - ~~(p / 2),
-                                b - ~~(g / 2), p, g));
+                                                                                                                                                                                                                                                                                                                                                                            b - ~~(g / 2), p, g));
                             a.restore()
                         }
                     }
@@ -2102,7 +2102,7 @@ console.log("Running Bot Launcher!");
                 });
                 (function() {
                     for (var a = ["ms", "moz", "webkit", "o"], b = 0; b < a.length && !d.requestAnimationFrame; ++b) d.requestAnimationFrame = d[a[b] + "RequestAnimationFrame"], d.cancelAnimationFrame = d[a[b] + "CancelAnimationFrame"] || d[a[b] +
-                        "CancelRequestAnimationFrame"];
+                                                                                                                                                                                                                                                 "CancelRequestAnimationFrame"];
                     d.requestAnimationFrame || (d.requestAnimationFrame = function(a) {
                         return setTimeout(a, 1E3 / 60)
                     }, d.cancelAnimationFrame = function(a) {
@@ -2110,108 +2110,108 @@ console.log("Running Bot Launcher!");
                     })
                 })();
                 var rb = {
-                        ka: function(a) {
-                            function b(a, b, c, d, e) {
-                                this.x = a;
-                                this.y = b;
-                                this.j = c;
-                                this.g = d;
-                                this.depth = e;
+                    ka: function(a) {
+                        function b(a, b, c, d, e) {
+                            this.x = a;
+                            this.y = b;
+                            this.j = c;
+                            this.g = d;
+                            this.depth = e;
+                            this.items = [];
+                            this.c = []
+                        }
+                        var c = a.ma || 2,
+                            d = a.na || 4;
+                        b.prototype = {
+                            x: 0,
+                            y: 0,
+                            j: 0,
+                            g: 0,
+                            depth: 0,
+                            items: null,
+                            c: null,
+                            H: function(a) {
+                                for (var b = 0; b < this.items.length; ++b) {
+                                    var c = this.items[b];
+                                    if (c.x >= a.x && c.y >= a.y && c.x < a.x + a.j && c.y < a.y + a.g) return !0
+                                        }
+                                if (0 !=
+                                    this.c.length) {
+                                    var d = this;
+                                    return this.$(a, function(b) {
+                                        return d.c[b].H(a)
+                                    })
+                                }
+                                return !1
+                            },
+                            A: function(a, b) {
+                                for (var c = 0; c < this.items.length; ++c) b(this.items[c]);
+                                if (0 != this.c.length) {
+                                    var d = this;
+                                    this.$(a, function(c) {
+                                        d.c[c].A(a, b)
+                                    })
+                                }
+                            },
+                            m: function(a) {
+                                0 != this.c.length ? this.c[this.Z(a)].m(a) : this.items.length >= c && this.depth < d ? (this.ha(), this.c[this.Z(a)].m(a)) : this.items.push(a)
+                            },
+                            Z: function(a) {
+                                return a.x < this.x + this.j / 2 ? a.y < this.y + this.g / 2 ? 0 : 2 : a.y < this.y + this.g / 2 ? 1 : 3
+                            },
+                            $: function(a, b) {
+                                return a.x < this.x + this.j / 2 &&
+                                    (a.y < this.y + this.g / 2 && b(0) || a.y >= this.y + this.g / 2 && b(2)) || a.x >= this.x + this.j / 2 && (a.y < this.y + this.g / 2 && b(1) || a.y >= this.y + this.g / 2 && b(3)) ? !0 : !1
+                            },
+                            ha: function() {
+                                var a = this.depth + 1,
+                                    c = this.j / 2,
+                                    d = this.g / 2;
+                                this.c.push(new b(this.x, this.y, c, d, a));
+                                this.c.push(new b(this.x + c, this.y, c, d, a));
+                                this.c.push(new b(this.x, this.y + d, c, d, a));
+                                this.c.push(new b(this.x + c, this.y + d, c, d, a));
+                                a = this.items;
                                 this.items = [];
-                                this.c = []
+                                for (c = 0; c < a.length; c++) this.m(a[c])
+                                    },
+                            clear: function() {
+                                for (var a = 0; a < this.c.length; a++) this.c[a].clear();
+                                this.items.length =
+                                    0;
+                                this.c.length = 0
                             }
-                            var c = a.ma || 2,
-                                d = a.na || 4;
-                            b.prototype = {
-                                x: 0,
-                                y: 0,
-                                j: 0,
-                                g: 0,
-                                depth: 0,
-                                items: null,
-                                c: null,
-                                H: function(a) {
-                                    for (var b = 0; b < this.items.length; ++b) {
-                                        var c = this.items[b];
-                                        if (c.x >= a.x && c.y >= a.y && c.x < a.x + a.j && c.y < a.y + a.g) return !0
-                                    }
-                                    if (0 !=
-                                        this.c.length) {
-                                        var d = this;
-                                        return this.$(a, function(b) {
-                                            return d.c[b].H(a)
-                                        })
-                                    }
-                                    return !1
-                                },
-                                A: function(a, b) {
-                                    for (var c = 0; c < this.items.length; ++c) b(this.items[c]);
-                                    if (0 != this.c.length) {
-                                        var d = this;
-                                        this.$(a, function(c) {
-                                            d.c[c].A(a, b)
-                                        })
-                                    }
-                                },
-                                m: function(a) {
-                                    0 != this.c.length ? this.c[this.Z(a)].m(a) : this.items.length >= c && this.depth < d ? (this.ha(), this.c[this.Z(a)].m(a)) : this.items.push(a)
-                                },
-                                Z: function(a) {
-                                    return a.x < this.x + this.j / 2 ? a.y < this.y + this.g / 2 ? 0 : 2 : a.y < this.y + this.g / 2 ? 1 : 3
-                                },
-                                $: function(a, b) {
-                                    return a.x < this.x + this.j / 2 &&
-                                        (a.y < this.y + this.g / 2 && b(0) || a.y >= this.y + this.g / 2 && b(2)) || a.x >= this.x + this.j / 2 && (a.y < this.y + this.g / 2 && b(1) || a.y >= this.y + this.g / 2 && b(3)) ? !0 : !1
-                                },
-                                ha: function() {
-                                    var a = this.depth + 1,
-                                        c = this.j / 2,
-                                        d = this.g / 2;
-                                    this.c.push(new b(this.x, this.y, c, d, a));
-                                    this.c.push(new b(this.x + c, this.y, c, d, a));
-                                    this.c.push(new b(this.x, this.y + d, c, d, a));
-                                    this.c.push(new b(this.x + c, this.y + d, c, d, a));
-                                    a = this.items;
-                                    this.items = [];
-                                    for (c = 0; c < a.length; c++) this.m(a[c])
-                                },
-                                clear: function() {
-                                    for (var a = 0; a < this.c.length; a++) this.c[a].clear();
-                                    this.items.length =
-                                        0;
-                                    this.c.length = 0
-                                }
-                            };
-                            var e = {
-                                x: 0,
-                                y: 0,
-                                j: 0,
-                                g: 0
-                            };
-                            return {
-                                root: new b(a.ca, a.da, a.oa - a.ca, a.pa - a.da, 0),
-                                m: function(a) {
-                                    this.root.m(a)
-                                },
-                                A: function(a, b) {
-                                    this.root.A(a, b)
-                                },
-                                ra: function(a, b, c, d, f) {
-                                    e.x = a;
-                                    e.y = b;
-                                    e.j = c;
-                                    e.g = d;
-                                    this.root.A(e, f)
-                                },
-                                H: function(a) {
-                                    return this.root.H(a)
-                                },
-                                clear: function() {
-                                    this.root.clear()
-                                }
+                        };
+                        var e = {
+                            x: 0,
+                            y: 0,
+                            j: 0,
+                            g: 0
+                        };
+                        return {
+                            root: new b(a.ca, a.da, a.oa - a.ca, a.pa - a.da, 0),
+                            m: function(a) {
+                                this.root.m(a)
+                            },
+                            A: function(a, b) {
+                                this.root.A(a, b)
+                            },
+                            ra: function(a, b, c, d, f) {
+                                e.x = a;
+                                e.y = b;
+                                e.j = c;
+                                e.g = d;
+                                this.root.A(e, f)
+                            },
+                            H: function(a) {
+                                return this.root.H(a)
+                            },
+                            clear: function() {
+                                this.root.clear()
                             }
                         }
-                    },
+                    }
+                },
                     db = function() {
                         var a = new da(0, 0, 0, 32, "#ED1C24", ""),
                             b = document.createElement("canvas");
@@ -2221,7 +2221,7 @@ console.log("Running Bot Launcher!");
                         return function() {
                             0 < k.length && (a.color = k[0].color, a.B(k[0].name));
                             c.clearRect(0,
-                                0, 32, 32);
+                                        0, 32, 32);
                             c.save();
                             c.translate(16, 16);
                             c.scale(.4, .4);
@@ -2245,30 +2245,30 @@ console.log("Running Bot Launcher!");
                 };
                 d.fbAsyncInit =
                     function() {
-                        function a() {
-                            d.localStorage.wannaLogin = 1;
-                            null == d.FB ? alert("You seem to have something blocking Facebook on your browser, please check for any extensions") : d.FB.login(function(a) {
-                                La(a)
-                            }, {
-                                scope: "public_profile, email"
-                            })
-                        }
-                        d.FB.init({
-                            appId: "677505792353827",
-                            cookie: !0,
-                            xfbml: !0,
-                            status: !0,
-                            version: "v2.2"
-                        });
-                        d.FB.Event.subscribe("auth.statusChange", function(b) {
-                            +d.localStorage.wannaLogin && ("connected" == b.status ? La(b) : a())
-                        });
-                        d.facebookLogin = a
-                    };
+                    function a() {
+                        d.localStorage.wannaLogin = 1;
+                        null == d.FB ? alert("You seem to have something blocking Facebook on your browser, please check for any extensions") : d.FB.login(function(a) {
+                            La(a)
+                        }, {
+                            scope: "public_profile, email"
+                        })
+                    }
+                    d.FB.init({
+                        appId: "677505792353827",
+                        cookie: !0,
+                        xfbml: !0,
+                        status: !0,
+                        version: "v2.2"
+                    });
+                    d.FB.Event.subscribe("auth.statusChange", function(b) {
+                        +d.localStorage.wannaLogin && ("connected" == b.status ? La(b) : a())
+                    });
+                    d.facebookLogin = a
+                };
                 d.logout = function() {
                     B = null;
                     e("#helloContainer").attr("data-logged-in",
-                        "0");
+                                              "0");
                     e("#helloContainer").attr("data-has-account-data", "0");
                     delete d.localStorage.wannaLogin;
                     delete d.localStorage.loginCache;
@@ -2297,7 +2297,7 @@ console.log("Running Bot Launcher!");
                     d.getContext("2d");
                     d.width = d.height = 70;
                     a(c, d,
-                        "", 26, "#ebc0de");
+                      "", 26, "#ebc0de");
                     return function() {
                         e(".cell-spinner").filter(":visible").each(function() {
                             var c = e(this),
