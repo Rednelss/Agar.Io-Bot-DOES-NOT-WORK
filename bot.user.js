@@ -2,12 +2,12 @@
 // @name        RednelssBot
 // @namespace   RednelssBot
 // @include     http://agar.io/*
-// @version     5.001
+// @version     5.01
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
 
-var rednelssBotVersion = 5.001;
+var rednelssBotVersion = 5.01;
 
 //TODO: Team mode
 //      Detect when people are merging
@@ -115,19 +115,21 @@ console.log("Running rednelss Bot!");
         return distance;
     }
 
-    function computerDistanceFromCircleEdge(x1, y1, x2, y2, s2) {
-        var tempD = computeDistance(x2, y2, x1, y1);
+    function computeDistanceFromCircleEdge(x1, y1, x2, y2, s2) {
+        var tempD = computeDistance(x1, y1, x2, y2);
 
         var offsetX = 0;
         var offsetY = 0;
 
-        var ratioX = tempD / (x2 - x1);
-        var ratioY = tempD / (y2 - y1);
+        var ratioX = tempD / (x1 - x2);
+        var ratioY = tempD / (y1 - y2);
 
-        offsetX = x2 - (s2 / ratioX);
-        offsetY = y2 - (s2 / ratioY);
+        offsetX = x1 - (s2 / ratioX);
+        offsetY = y1 - (s2 / ratioY);
 
-        return computeDistance(x1, y1, offsetX, offsetY);
+        drawPoint(offsetX, offsetY, 5, "");
+
+        return computeDistance(x2, y2, offsetX, offsetY);
     }
 
     function compareSize(player1, player2, ratio) {
@@ -138,10 +140,10 @@ console.log("Running rednelss Bot!");
     }
 
     function canSplit(player1, player2) {
-        return compareSize(player1, player2, 2.30) && !compareSize(player1, player2, 9);
+        return compareSize(player1, player2, 2.30) && !compareSize(player1, player2, 7);
     }
 
-    function isItMe(player, cell2) {
+    function isItMe(player, cell) {
         if (getMode() == ":teams") {
             var currentColor = player[0].color;
 
@@ -151,7 +153,7 @@ console.log("Running rednelss Bot!");
 
             var currentTeam = getTeam(currentRed, currentGreen, currentBlue);
 
-            var cellColor = cell2.color;
+            var cellColor = cell.color;
 
             var cellRed = parseInt(cellColor.substring(1,3), 16);
             var cellGreen = parseInt(cellColor.substring(3,5), 16);
@@ -159,7 +161,7 @@ console.log("Running rednelss Bot!");
 
             var cellTeam = getTeam(cellRed, cellGreen, cellBlue);
 
-            if (currentTeam == cellTeam && !cell2.isVirus()) {
+            if (currentTeam == cellTeam && !cell.isVirus()) {
                 return true;
             }
 
@@ -167,7 +169,7 @@ console.log("Running rednelss Bot!");
 
         } else {
             for (var i = 0; i < player.length; i++) {
-                if (cell2.id == player[i].id) {
+                if (cell.id == player[i].id) {
                     return true;
                 }
             }
@@ -214,6 +216,25 @@ console.log("Running rednelss Bot!");
         return false;
     }
 
+    function getMass(blob){
+        setShowMass(true);
+        //This var is only declared while showMass=true.
+        return blob.O.F;
+    }
+
+    function getTimeToRemerge(mass){
+        return ((mass*0.02) +30);
+    }
+
+    function getBlobCount(player){
+        var count = 0;
+        Object.keys(player).forEach(function(item, i) {
+            count++;
+        });
+        //return Object.keys(player).length - 1;
+        return count - 1;
+    }
+
     function separateListBasedOnFunction(listToUse, blob) {
         var foodElementList = [];
         var threatList = [];
@@ -241,7 +262,10 @@ console.log("Running rednelss Bot!");
                     //IT'S VIRUS!
                     virusList.push(listToUse[element]);
                 }
-            }
+            }/*else if(isMe && (getBlobCount(getPlayer()) > 0)){
+                //Attempt to make the other cell follow the mother one
+                foodElementList.push(listToUse[element]);
+            }*/
         });
 
         foodList = [];
@@ -490,12 +514,12 @@ console.log("Running rednelss Bot!");
         var angleRight = getAngle(cx + tb.x, cy + tb.y, px, py);
         var angleDistance = (angleRight - angleLeft).mod(360);
 
-        if (shouldInvert) {
+        /*if (shouldInvert) {
             var temp = angleLeft;
             angleLeft = (angleRight + 180).mod(360);
             angleRight = (temp + 180).mod(360);
             angleDistance = (angleRight - angleLeft).mod(360);
-        }
+        }*/
 
         return [angleLeft, angleDistance, [cx + tb.x, cy + tb.y],
                 [cx + ta.x, cy + ta.y]
@@ -509,55 +533,124 @@ console.log("Running rednelss Bot!");
     }
 
     function addWall(listToUse, blob) {
-        if (blob.x < f.getMapStartX() + 1000) {
+        //var mapSizeX = Math.abs(f.getMapStartX - f.getMapEndX);
+        //var mapSizeY = Math.abs(f.getMapStartY - f.getMapEndY);
+        //var distanceFromWallX = mapSizeX/3;
+        //var distanceFromWallY = mapSizeY/3;
+        var distanceFromWallY = 2000;
+        var distanceFromWallX = 2000;
+        if (Math.abs(f.getMapEndY - f.getMapStartY) < distanceFromWallY || Math.abs(f.getMapEndX - f.getMapEndX) < distanceFromWallX){
+            //MAPTOOSMALL
+            //console.log("Map Too Small!");
+            listToUse.push([
+                [0, true],
+                [0, false], 0
+            ]);
+        }
+        /*else if (blob.y < f.getMapStartY() + distanceFromWallY && blob.x < f.getMapStartX() + distanceFromWallX){
+            //TOPLEFT
+            //console.log("Top Left");
+            listToUse.push([
+                [90, true],
+                [360, false], computeDistance(getMapStartX(), f.getMapStartY(), blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(90, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(360, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
+        }
+        else if (blob.y < f.getMapStartY() + distanceFromWallY && blob.x > f.getMapEndX() - distanceFromWallX){
+            //TOPRIGHT
+            //console.log("Top Right");
+            listToUse.push([
+                [180, true],
+                [90, false], computeDistance(getMapEndX(), f.getMapStartY(), blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(180, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(90, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
+        }
+        else if (blob.y > f.getMapEndY() - distanceFromWallY && blob.x < f.getMapStartX() + distanceFromWallX){
+            //BOTTOMLEFT
+            //console.log("Bottom Left");
+            listToUse.push([
+                [0, true],
+                [270, false], computeDistance(getMapStartX(), f.getMapEndY(), blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(0, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(270, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
+        }
+        else if (blob.y > f.getMapEndY() - distanceFromWallY && blob.x > f.getMapEndX() - distanceFromWallX){
+            //BOTTOMRIGHT
+            //console.log("Bottom Right");
+            listToUse.push([
+                [270, true],
+                [180, false], computeDistance(getMapEndX(), f.getMapEndY(), blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(270, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(180, blob.x, blob.y, 190 + blob.size);
+            drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
+            drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
+            drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
+        }*/
+        if (blob.x < f.getMapStartX() + distanceFromWallX) {
             //LEFT
             //console.log("Left");
-
-            listToUse.push([[135, true], [225, false]]);
-
-            var lineLeft = followAngle(135, blob.x, blob.y, 190 + blob.size);
-            var lineRight = followAngle(225, blob.x, blob.y, 190 + blob.size);
+            listToUse.push([
+                [89, true],
+                [271, false], computeDistance(getMapStartX(), blob.y, blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(90, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(270, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        if (blob.y < f.getMapStartY() + 1000) {
+        if (blob.y < f.getMapStartY() + distanceFromWallY) {
             //TOP
             //console.log("TOP");
-
-            listToUse.push([[225, true], [315, false]]);
-
-            var lineLeft = followAngle(225, blob.x, blob.y, 190 + blob.size);
-            var lineRight = followAngle(315, blob.x, blob.y, 190 + blob.size);
+            listToUse.push([
+                [179, true],
+                [1, false], computeDistance(blob.x, getMapStartY, blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(180, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(360, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        if (blob.x > f.getMapEndX() - 1000) {
+        if (blob.x > f.getMapEndX() - distanceFromWallX) {
             //RIGHT
             //console.log("RIGHT");
-
-            listToUse.push([[315, true], [45, false]]);
-
-            var lineLeft = followAngle(315, blob.x, blob.y, 190 + blob.size);
-            var lineRight = followAngle(45, blob.x, blob.y, 190 + blob.size);
+            listToUse.push([
+                [269, true],
+                [91, false], computeDistance(getMapEndX(), blob.y, blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(270, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(90, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-        if (blob.y > f.getMapEndY() - 1000) {
+        if (blob.y > f.getMapEndY() - distanceFromWallY) {
             //BOTTOM
             //console.log("BOTTOM");
-
-            listToUse.push([[45, true], [135, false]]);
-
-            var lineLeft = followAngle(45, blob.x, blob.y, 190 + blob.size);
-            var lineRight = followAngle(135, blob.x, blob.y, 190 + blob.size);
+            listToUse.push([
+                [359, true],
+                [181, false], computeDistance(blob.x, getMapEndY, blob.x, blob.y)
+            ]);
+            var lineLeft = followAngle(0, blob.x, blob.y, 190 + blob.size);
+            var lineRight = followAngle(180, blob.x, blob.y, 190 + blob.size);
             drawLine(blob.x, blob.y, lineLeft[0], lineLeft[1], 5);
             drawLine(blob.x, blob.y, lineRight[0], lineRight[1], 5);
             drawArc(lineLeft[0], lineLeft[1], lineRight[0], lineRight[1], blob.x, blob.y, 5);
         }
-
         return listToUse;
     }
 
@@ -586,16 +679,18 @@ console.log("Running rednelss Bot!");
 
         //TODO: Only add the new range at the end after the right stuff has been removed.
 
+        var newListToUse = listToUse.slice();
+
         var startIndex = 1;
 
-        if (listToUse.length > 0 && !listToUse[0][1]) {
+        if (newListToUse.length > 0 && !newListToUse[0][1]) {
             startIndex = 0;
         }
 
-        var startMark = getAngleIndex(listToUse, range[0][0]);
+        var startMark = getAngleIndex(newListToUse, range[0][0]);
         var startBool = startMark.mod(2) != startIndex;
 
-        var endMark = getAngleIndex(listToUse, range[1][0]);
+        var endMark = getAngleIndex(newListToUse, range[1][0]);
         var endBool = endMark.mod(2) != startIndex;
 
         var removeList = [];
@@ -603,19 +698,19 @@ console.log("Running rednelss Bot!");
         if (startMark != endMark) {
             //Note: If there is still an error, this would be it.
             var biggerList = 0;
-            if (endMark == listToUse.length) {
+            if (endMark == newListToUse.length) {
                 biggerList = 1;
             }
 
-            for (var i = startMark; i < startMark + (endMark - startMark).mod(listToUse.length + biggerList); i++) {
-                removeList.push((i).mod(listToUse.length));
+            for (var i = startMark; i < startMark + (endMark - startMark).mod(newListToUse.length + biggerList); i++) {
+                removeList.push((i).mod(newListToUse.length));
             }
-        } else if (startMark < listToUse.length && endMark < listToUse.length) {
-            var startDist = (listToUse[startMark][0] - range[0][0]).mod(360);
-            var endDist = (listToUse[endMark][0] - range[1][0]).mod(360);
+        } else if (startMark < newListToUse.length && endMark < newListToUse.length) {
+            var startDist = (newListToUse[startMark][0] - range[0][0]).mod(360);
+            var endDist = (newListToUse[endMark][0] - range[1][0]).mod(360);
 
             if (startDist < endDist) {
-                for (var i = 0; i < listToUse.length; i++) {
+                for (var i = 0; i < newListToUse.length; i++) {
                     removeList.push(i);
                 }
             }
@@ -624,17 +719,17 @@ console.log("Running rednelss Bot!");
         removeList.sort(function(a, b){return b-a});
 
         for (var i = 0; i < removeList.length; i++) {
-            listToUse.splice(removeList[i], 1);
+            newListToUse.splice(removeList[i], 1);
         }
 
         if (startBool) {
-            listToUse.splice(getAngleIndex(listToUse, range[0][0]), 0, range[0]);
+            newListToUse.splice(getAngleIndex(newListToUse, range[0][0]), 0, range[0]);
         }
         if (endBool) {
-            listToUse.splice(getAngleIndex(listToUse, range[1][0]), 0, range[1]);
+            newListToUse.splice(getAngleIndex(newListToUse, range[1][0]), 0, range[1]);
         }
 
-        return listToUse;
+        return newListToUse;
     }
 
     function getAngleRange(blob1, blob2, index, radius) {
@@ -701,22 +796,40 @@ console.log("Running rednelss Bot!");
         return angle;
     }
 
+    /**
+     * This is the main bot logic. This is called quite often.
+     * @param  followMouse Is a boolean. If set to true, it means the user is asking for the bot to follow the mouse coordinates.
+     * @return A 2 dimensional array with coordinates for every cells.  [[x, y], [x, y]]
+     */
     function findDestination(followMouse) {
         var player = getPlayer();
         var interNodes = getMemoryCells();
+        //console.warn("findDestination(followMouse) was called from line " + arguments.callee.caller.toString());
 
         if ( /*!toggle*/ 1) {
-            var useMouseX = (getMouseX() - getWidth() / 2 + getX() * getRatio()) / getRatio();
-            var useMouseY = (getMouseY() - getHeight() / 2 + getY() * getRatio()) / getRatio();
+
+            //The following code converts the mouse position into an
+            //absolute game coordinate.
+            var useMouseX = screenToGameX(getMouseX());
+            var useMouseY = screenToGameY(getMouseY());
             tempPoint = [useMouseX, useMouseY, 1];
 
+            //The current destination that the cells where going towards.
             var tempMoveX = getPointX();
             var tempMoveY = getPointY();
 
+            //This variable will be returned at the end.
+            //It will contain the destination choices for all the cells.
+            //BTW!!! ERROR ERROR ABORT MISSION!!!!!!! READ BELOW -----------
+            //
+            //SINCE IT'S STUPID NOW TO ASK EACH CELL WHERE THEY WANT TO GO,
+            //THE BOT SHOULD SIMPLY PICK ONE AND THAT'S IT, I MEAN WTF....
             var destinationChoices = []; //destination, size, danger
 
+            //Just to make sure the player is alive.
             if (player.length > 0) {
 
+                //Loop through all the player's cells.
                 for (var k = 0; k < player.length; k++) {
 
                     //console.log("Working on blob: " + k);
@@ -726,12 +839,19 @@ console.log("Running rednelss Bot!");
 
                     //var allDots = processEverything(interNodes);
 
+                    //loop through everything that is on the screen and
+                    //separate everything in it's own category.
                     var allIsAll = getAll(player[k]);
 
+                    //The food stored in element 0 of allIsAll
                     var allPossibleFood = allIsAll[0];
+                    //The threats are stored in element 1 of allIsAll
                     var allPossibleThreats = allIsAll[1];
+                    //The viruses are stored in element 2 of allIsAll
                     var allPossibleViruses = allIsAll[2];
 
+                    //The bot works by removing angles in which it is too
+                    //dangerous to travel towards to.
                     var badAngles = [];
                     var obstacleList = [];
 
@@ -741,6 +861,18 @@ console.log("Running rednelss Bot!");
                     var clusterAllFood = clusterFood(allPossibleFood, player[k].size);
 
                     //console.log("Looking for enemies!");
+
+                    //Loop through all the cells that were identified as threats.
+                    for (var i = 0; i < allPossibleThreats.length; i++) {
+
+                        var enemyDistance = computeDistanceFromCircleEdge(allPossibleThreats[i].x, allPossibleThreats[i].y, player[k].x, player[k].y, allPossibleThreats[i].size);
+
+                        allPossibleThreats[i].enemyDist = enemyDistance;
+                    }
+
+                    /*allPossibleThreats.sort(function(a, b){
+                        return a.enemyDist-b.enemyDist;
+                    })*/
 
                     for (var i = 0; i < allPossibleThreats.length; i++) {
 
@@ -787,11 +919,11 @@ console.log("Running rednelss Bot!");
 
                         if ((enemyCanSplit && enemyDistance < splitDangerDistance) || (enemyCanSplit && allPossibleThreats[i].danger)) {
 
-                            badAngles.push(getAngleRange(player[k], allPossibleThreats[i], i, splitDangerDistance));
+                            badAngles.push(getAngleRange(player[k], allPossibleThreats[i], i, splitDangerDistance).concat(allPossibleThreats[i].enemyDist));
 
                         } else if ((!enemyCanSplit && enemyDistance < normalDangerDistance) || (!enemyCanSplit && allPossibleThreats[i].danger)) {
 
-                            badAngles.push(getAngleRange(player[k], allPossibleThreats[i], i, normalDangerDistance));
+                            badAngles.push(getAngleRange(player[k], allPossibleThreats[i], i, normalDangerDistance).concat(allPossibleThreats[i].enemyDist));
 
                         } else if (enemyCanSplit && enemyDistance < splitDangerDistance + shiftDistance) {
                             var tempOb = getAngleRange(player[k], allPossibleThreats[i], i, splitDangerDistance + shiftDistance);
@@ -852,11 +984,17 @@ console.log("Running rednelss Bot!");
                     for (var i = 0; i < badAngles.length; i++) {
                         var angle1 = badAngles[i][0];
                         var angle2 = rangeToAngle(badAngles[i]);
-                        stupidList.push([[angle1, true], [angle2, false]]);
+                        stupidList.push([[angle1, true], [angle2, false], badAngles[i][2]]);
+                        //console.log("\tSome value: " + badAngles[i][2] + " but: " + badAngles[i][0]);
                     }
 
                     //stupidList.push([[45, true], [135, false]]);
                     //stupidList.push([[10, true], [200, false]]);
+
+                    stupidList.sort(function(a, b){
+                        //console.log("Distance: " + a[2] + ", " + b[2]);
+                        return a[2]-b[2];
+                    })
 
                     //console.log("Added random noob stuff.");
 
@@ -865,10 +1003,13 @@ console.log("Running rednelss Bot!");
 
                     for (var i = 0; i < stupidList.length; i++) {
                         //console.log("Adding to sorted: " + stupidList[i][0][0] + ", " + stupidList[i][1][0]);
-                        sortedInterList = addAngle(sortedInterList, stupidList[i])
+                        var tempList = addAngle(sortedInterList, stupidList[i]);
 
-                        if (sortedInterList.length == 0) {
+                        if (tempList.length == 0) {
+                            console.log("MAYDAY IT'S HAPPENING!");
                             break;
+                        } else {
+                            sortedInterList = tempList;
                         }
                     }
 
@@ -969,8 +1110,28 @@ console.log("Running rednelss Bot!");
                         //tempMoveX = line1[0];
                         //tempMoveY = line1[1];
                     } else if (badAngles.length > 0 && goodAngles == 0) {
-                        //TODO: CODE TO HANDLE WHEN THERE IS NO GOOD ANGLE BUT THERE ARE ENEMIES AROUND!!!!!!!!!!!!!
+                        //When there are enemies around but no good angles
+                        //You're likely screwed. (This should never happen.)
+
+                        console.log("Failed");
                         destinationChoices.push([tempMoveX, tempMoveY]);
+                        /*var angleWeights = [] //Put weights on the angles according to enemy distance
+                        for (var i = 0; i < allPossibleThreats.length; i++){
+                            var dist = computeDistance(player[k].x, player[k].y, allPossibleThreats[i].x, allPossibleThreats[i].y);
+                            var angle = getAngle(allPossibleThreats[i].x, allPossibleThreats[i].y, player[k].x, player[k].y);
+                            angleWeights.push([angle,dist]);
+                        }
+                        var maxDist = 0;
+                        var finalAngle = 0;
+                        for (var i = 0; i < angleWeights.length; i++){
+                            if (angleWeights[i][1] > maxDist){
+                                maxDist = angleWeights[i][1];
+                                finalAngle = (angleWeights[i][0] + 180).mod(360);
+                            }
+                        }
+                        var line1 = followAngle(finalAngle,player[k].x,player[k].y,f.verticalDistance());
+                        drawLine(player[k].x, player[k].y, line1[0], line1[1], 2);
+                        destinationChoices.push(line1);*/
                     } else if (clusterAllFood.length > 0) {
                         for (var i = 0; i < clusterAllFood.length; i++) {
                             //console.log("mefore: " + clusterAllFood[i][2]);
@@ -1055,12 +1216,24 @@ console.log("Running rednelss Bot!");
         }
     }
 
+    /**
+     * A conversion from the screen's horizontal coordinate system
+     * to the game's horizontal coordinate system.
+     * @param x in the screen's coordinate system
+     * @return x in the game's coordinate system
+     */
     function screenToGameX(x) {
         return (x - getWidth() / 2) / getRatio() + getX();
     }
 
+    /**
+     * A conversion from the screen's vertical coordinate system
+     * to the game's vertical coordinate system.
+     * @param y in the screen's coordinate system
+     * @return y in the game's coordinate system
+     */
     function screenToGameY(y) {
-        return (y - getHeight() / 2) / getRatio() + getY();;
+        return (y - getHeight() / 2) / getRatio() + getY();
     }
 
     function drawPoint(x_1, y_1, drawColor, text) {
@@ -1079,47 +1252,95 @@ console.log("Running rednelss Bot!");
         f.drawCircle(x_1, y_1, radius, drawColor);
     }
 
+    /**
+     * Some horse shit of some sort.
+     * @return Horse Shit
+     */
     function screenDistance() {
         var temp = f.getScreenDistance();
         return temp;
     }
 
+    /**
+     * Tells you if the game is in Dark mode.
+     * @return Boolean for dark mode.
+     */
     function getDarkBool() {
         return f.getDarkBool();
     }
 
+    /**
+     * Tells you if the mass is shown.
+     * @return Boolean for player's mass.
+     */
     function getMassBool() {
         return f.getMassBool();
     }
 
+    /**
+     * This is a copy of everything that is shown on screen.
+     * Normally stuff will time out when off the screen, this
+     * memorizes everything that leaves the screen for a little
+     * while longer.
+     * @return The memory object.
+     */
     function getMemoryCells() {
         return f.getMemoryCells();
     }
 
+    /**
+     * [getCellsArray description]
+     * @return {[type]} [description]
+     */
     function getCellsArray() {
         return f.getCellsArray();
     }
 
+    /**
+     * This is the original "getMemoryCells" without the memory part.
+     * @return Non memorized object.
+     */
     function getCells() {
         return f.getCells();
     }
 
+    /**
+     * Returns an array with all the player's cells.
+     * @return Player's cells
+     */
     function getPlayer() {
         return f.getPlayer();
     }
 
+    /**
+     * The canvas' width.
+     * @return Integer Width
+     */
     function getWidth() {
         return f.getWidth();
     }
 
+    /**
+     * The canvas' height
+     * @return Integer Height
+     */
     function getHeight() {
         return f.getHeight();
     }
 
+    /**
+     * Scaling ratio of the canvas. The bigger this ration,
+     * the further that you see.
+     * @return Screen scaling ratio.
+     */
     function getRatio() {
         return f.getRatio();
     }
 
+    /**
+     * [getOffsetX description]
+     * @return {[type]} [description]
+     */
     function getOffsetX() {
         return f.getOffsetX();
     }
@@ -1144,18 +1365,34 @@ console.log("Running rednelss Bot!");
         return f.getPointY();
     }
 
+    /**
+     * The X location of the mouse.
+     * @return Integer X
+     */
     function getMouseX() {
         return f.getMouseX();
     }
 
+    /**
+     * The Y location of the mouse.
+     * @return Integer Y
+     */
     function getMouseY() {
         return f.getMouseY();
     }
 
+    /**
+     * A timestamp since the last time the server sent any data.
+     * @return Last update timestamp
+     */
     function getUpdate() {
         return f.getLastUpdate();
     }
 
+    /**
+     * The game's current mode. (":ffa", ":experimental", ":teams". ":party")
+     * @return {[type]} [description]
+     */
     function getMode() {
         return f.getMode();
     }
