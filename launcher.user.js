@@ -2,12 +2,12 @@
 // @name        RednelssLauncher
 // @namespace   RednelssLauncher
 // @include     http://agar.io/*
-// @version     5.02
+// @version     5.03
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
 
-var rednelssLauncherVersion = 5.02;
+var rednelssLauncherVersion = 5.03;
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -636,17 +636,13 @@ console.log("Running Bot Launcher!");
         }
 
         if (getPlayer().length == 0) {
-            if ((d.localStorage.wannaLogin != null && fbDone) || d.localStorage.wannaLogin == null) {
-                console.log("Revive " + d.localStorage.wannaLogin);
-                setNick(originalName);
-                reviving = true;
-            } else {
-                console.log("Wait!");
-            }
+            console.log("Revive");
+            setNick(originalName);
+            reviving = true;
         } else if (getPlayer().length > 0 && reviving) {
             reviving = false;
+            console.log("Done Reviving!");
         }
-
 
         if (T()) {
             var a = fa - m / 2;
@@ -1204,7 +1200,6 @@ console.log("Running Bot Launcher!");
             f: +a[5],
             d: +a[6]
         });
-        fbDone = true;
         console.log("Hello Facebook?");
     }
 
@@ -1229,7 +1224,6 @@ console.log("Running Bot Launcher!");
                         f: +a[1],
                         d: +a[2]
                     });
-                    fbDone = true;
                     console.log("Facebook connected!");
                 },
                 dataType: "text",
@@ -1316,7 +1310,6 @@ console.log("Running Bot Launcher!");
                 reviving = false,
                 message = [],
                 selectedCell = 0,
-                fbDone = false,
 
                 q = null,
                 s = 0,
@@ -2273,7 +2266,6 @@ console.log("Running Bot Launcher!");
                     delete d.localStorage.wannaLogin;
                     delete d.localStorage.loginCache;
                     delete d.localStorage.fbPictureCache;
-                    fbDone = false;
                     I()
                 };
                 var Fb = function() {
