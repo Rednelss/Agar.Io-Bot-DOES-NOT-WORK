@@ -6,7 +6,7 @@
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
-var rednelssLauncherVersion = 5.00;
+var rednelssLauncherVersion = 5.10;
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
