@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name        RednelssBot
-// @namespace   RednelssBot
+// @name        rednelssBot
+// @namespace   rednelssBot
 // @include     http://agar.io/*
-// @version     5.02
+// @version     5.10
 // @grant       none
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
 
-var rednelssBotVersion = 5.02;
+var rednelssBotVersion = 5.10;
 
 //TODO: Team mode
 //      Detect when people are merging
@@ -24,44 +24,44 @@ Array.prototype.peek = function() {
     return this[this.length - 1];
 };
 
-var sha = "ebe77da9d35c0366509ec295407612c100ba3cea";
+var sha = "a59c394a95132fabc92fef566e3959b306d821af";
 function getLatestCommit() {
     window.jQuery.ajax({
-        url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
-        cache: false,
-        dataType: "jsonp"
-    }).done(function(data) {
-        console.dir(data["data"])
-        console.log("hmm: " + data["data"]["object"]["sha"]);
-        sha = data["data"]["object"]["sha"];
+            url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
+            cache: false,
+            dataType: "jsonp"
+        }).done(function(data) {
+            console.dir(data.data);
+            console.log("hmm: " + data.data.object.sha);
+            sha = data.data.object.sha;
 
-        function update(prefix, name, url) {
-            window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
-            window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
-            window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
-            window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
-            window.jQuery('#' + prefix + 'Link').on('click', function() {
-                window.jQuery("#" + prefix + "Dialog").hide();
-                window.jQuery("#" + prefix + "Dialog").remove();
-            });
-            window.jQuery("#" + prefix + "Dialog").show();
-        }
-
-        $.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/bot.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
-            var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
-            latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
-
-            latestVersion = parseFloat(latestVersion + 0.0000);
-            var myVersion = parseFloat(rednelssBotVersion + 0.0000); 
-
-            if(latestVersion > myVersion)
-            {
-                update("rednelssBot", "bot.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/bot.user.js/");
+            function update(prefix, name, url) {
+                window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
+                window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
+                window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
+                window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
+                window.jQuery('#' + prefix + 'Link').on('click', function() {
+                    window.jQuery("#" + prefix + "Dialog").hide();
+                    window.jQuery("#" + prefix + "Dialog").remove();
+                });
+                window.jQuery("#" + prefix + "Dialog").show();
             }
-            console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
-        });
 
-    }).fail(function() {});
+            $.get('https://raw.githubusercontent.com/rednelss/Agar.io-bot/master/bot.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
+                var latestVersion = data.replace(/(\r\n|\n|\r)/gm,"");
+                latestVersion = latestVersion.substring(latestVersion.indexOf("// @version")+11,latestVersion.indexOf("// @grant"));
+
+                latestVersion = parseFloat(latestVersion + 0.0000);
+                var myVersion = parseFloat(rednelssBotVersion + 0.0000); 
+                
+                if(latestVersion > myVersion)
+                {
+                    update("rednelssBot", "bot.user.js", "https://github.com/rednelss/Agar.io-bot/blob/" + sha + "/bot.user.js/");
+                }
+                console.log('Current bot.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+            });
+
+        }).fail(function() {});
 }
 getLatestCommit();
 
@@ -834,10 +834,10 @@ function rednelssBot() {
                         //console.log("Found distance.");
 
                         var enemyCanSplit = this.canSplit(player[k], allPossibleThreats[i]);
+                        var secureDistance = (enemyCanSplit ? splitDangerDistance : normalDangerDistance);
                         
                         for (var j = clusterAllFood.length - 1; j >= 0 ; j--) {
-                            var secureDistance = (enemyCanSplit ? splitDangerDistance : normalDangerDistance);
-                            if (this.computeDistance(allPossibleThreats[i].x, allPossibleThreats[i].y, clusterAllFood[j][0], clusterAllFood[j][1]) < secureDistance)
+                            if (this.computeDistance(allPossibleThreats[i].x, allPossibleThreats[i].y, clusterAllFood[j][0], clusterAllFood[j][1]) < secureDistance + shiftDistance)
                                 clusterAllFood.splice(j, 1);
                         }
 
