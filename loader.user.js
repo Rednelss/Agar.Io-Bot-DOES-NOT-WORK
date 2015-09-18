@@ -8,7 +8,7 @@
 // @author      youtube.com/RednelssPlay
 // ==/UserScript==
 var rednelssLoaderVersion = 5.00;
-var sha = "a59c394a95132fabc92fef566e3959b306d821af";
+var sha = "59e31fec78a85f888a6d1c8c328b6b1fa4b0454f";
 
 function getLatestCommit() {
 	window.jQuery.ajax({
