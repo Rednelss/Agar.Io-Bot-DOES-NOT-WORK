@@ -24,7 +24,7 @@ Array.prototype.peek = function() {
     return this[this.length - 1];
 };
 
-var sha = "a59c394a95132fabc92fef566e3959b306d821af";
+var sha = "59e31fec78a85f888a6d1c8c328b6b1fa4b0454f";
 function getLatestCommit() {
     window.jQuery.ajax({
             url: "https://api.github.com/repos/rednelss/Agar.io-bot/git/refs/heads/master",
